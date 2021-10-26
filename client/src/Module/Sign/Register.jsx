@@ -50,11 +50,12 @@ const Register = (props) => {
   const [form] = Form.useForm();
 
   const onFinish = async(values) => {
-    console.log(values)
+    // console.log(values)
     const { code, msg, data } = await reqRegister(values);
    
     if (!code) {
         storeToken(data.token);
+        console.log(data.username)
         configureReq();
         history.replace('/')
     } else {

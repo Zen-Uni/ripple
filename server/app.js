@@ -14,6 +14,7 @@ const { jwtRightVerify, secret } = require("./utils/jwt")
 
 const index = require('./routes/index')
 const users = require('./routes/users')
+const uploads = require("./routes/upload");
 
 // error handler
 onerror(app)
@@ -23,7 +24,7 @@ app.use(jwtRightVerify)
 app.use(jwt({
   secret
 }).unless({
-  path: [/^\/api\/user\//]
+  path: [/^\/api\/user\//, /^\/avatar\//]
 }))
 
 
@@ -44,7 +45,7 @@ app.use(bodyparser({
 app.use(json())
 app.use(logger())
 // app.use(require('koa-static')(__dirname + '/public'))
-
+app.use(require('koa-static')(__dirname + '/upload'))
 // app.use(views(__dirname + '/views', {
 //   extension: 'pug'
 // }))
@@ -60,6 +61,8 @@ app.use(async (ctx, next) => {
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(uploads.routes(), uploads.allowedMethods())
+
 
 // error-handling
 app.on('error', (err, ctx) => {

@@ -3,7 +3,6 @@
  */
 
 
-// TODO: update
 import { SignWrapper } from './style.js'
 import Login from './Login'
 import { useState } from 'react'

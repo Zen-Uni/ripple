@@ -17,6 +17,7 @@ import { useHistory } from 'react-router';
       const { code, data, msg } = await reqLogin(values);
       if (!code) {
         storeToken(data.token);
+        console.log(data.username);
         configureReq();
         history.replace('/');
       } else {

@@ -4,9 +4,9 @@
 import axios from 'axios';
 import { getItem } from './localStorage';
 
-
-const root = "http://localhost:8080/api";
-
+const ROOT = "http://localhost:8080";
+export const root = ROOT + "/api";
+export const avatarRoot = ROOT + "/avatar"
 const fetch = (method, path, data) => {
     return new Promise((resolve, reject) => {
         axios[method](root + path, data)
@@ -19,7 +19,7 @@ const fetch = (method, path, data) => {
 // axios prefix
 export const configureReq = () => {
     const token = getItem("token");
-    console.log(token);
+    // console.log(token);
     if (token) {
         axios.interceptors.request.use(config => {
             config.headers.Authorization = `Bearer ${token}`
@@ -46,4 +46,9 @@ export const reqLogin = async data => {
 // token check
 export const reqTokenCheck = async () => {
     return await fetch("get", '/user/token-check');
+}
+
+// upload avatar
+export const uploadAvatar = async (data) => {
+    return await fetch("post", '/upload/avatar', data);
 }

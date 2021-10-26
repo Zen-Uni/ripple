@@ -10,9 +10,20 @@ const storeItem = (key) => {
     }
 }
 
+// remove localStorage
+const removeItem = (key) => {
+    return () => {
+        localStorage.removeItem(ITEM + key);
+    }
+}
+
 export const getItem = (key) => {
     return localStorage.getItem(ITEM + key);
 }
 
 // store token function
 export const storeToken = storeItem("token");
+
+
+// remove token
+export const removeToken = removeItem("token");

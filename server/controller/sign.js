@@ -25,9 +25,12 @@ const userRegister =  (userMsg) => {
     return new Promise(async (resolve, reject) => {
        try {
         await User.save();
-        const { email } = userMsg;
+        const { email, username } = userMsg;
         const token = await dispatchToken(email);
-        const res = new SuccessfulModel({token}, "用户注册成功");
+        const res = new SuccessfulModel({
+            token, 
+            username
+        }, "用户注册成功");
 
         resolve(res);
        } catch (err) {
@@ -47,8 +50,12 @@ const userLogin = (userMsg) => {
             resolve(new ErrorModel("尚未注册"));
         } else {
             const { email } = userMsg;
+            const { username } = res;
             const token = await dispatchToken(email);
-            resolve(new SuccessfulModel({token}, "登陆成功"))
+            resolve(new SuccessfulModel({
+                token,
+                username
+            }, "登陆成功"))
         }
 
     })
@@ -64,8 +71,17 @@ const tokenCheck = (token) => {
         } 
         else {
             try {
-                const {  data } = res;
-                resolve(data);
+                const user = await UserModel.findOne({
+                    email: res.data.email
+                }).exec();
+                if (user == null) {
+                    resolve(new ErrorModel("解析 token 失败"));
+                } else {
+                    const { username, email, avatar } = user;
+                    const resMsg = {username, email, avatar};
+                    resolve(new SuccessfulModel(resMsg));
+                }
+                
             } catch {
                 resolve(new ErrorModel("解析 token 失败"))
             }
