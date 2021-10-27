@@ -52,3 +52,7 @@ export const reqTokenCheck = async () => {
 export const uploadAvatar = async (data) => {
     return await fetch("post", '/upload/avatar', data);
 }
+
+export const findUser = async (data) => {
+    return await fetch("post", "/user/find", data);
+}

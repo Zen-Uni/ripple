@@ -2,6 +2,7 @@
  * @description path: /api/user, about user login, register and none-token service
  */
 
+const { handleSearchUser } = require('../controller/friend')
 const { emailCheck, userRegister, userLogin, tokenCheck } = require('../controller/sign')
 // const { dispatchToken } = require('../utils/jwt')
 
@@ -52,6 +53,17 @@ router.get('/token-check', async (ctx, next) => {
   ctx.body = await tokenCheck(token);
 })
 
+
+// find user
+router.post('/find', async (ctx, next) => {
+  const { email } = ctx.request.body;
+  ctx.body =  await handleSearchUser(email);
+})
+
+// TODO：好友请求
+router.post('/friend-request', async (ctx, next) => {
+  
+})
 
 
 module.exports = router

@@ -31,6 +31,8 @@ export const ContainerWrapper = styled.div`
 export const ChatWrapper = styled.div`
     height: 650px;
     width: 1000px;
+    overflow: hidden;
+    border-radius: 7px;
     background-color: rgba(255,255,255,.6);
     box-shadow: 0px 0px 40px rgba(0,0,0,.5);
     display: flex;

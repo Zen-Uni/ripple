@@ -4,12 +4,13 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+// var app = require('../app');
+const server = require("../socket");
 var debug = require('debug')('demo:server');
-var http = require('http');
+// var http = require('http');
 
 // 加入 socket.io
-const { Server } = require("socket.io");
+// const { Server } = require("socket.io");
 
 /**
  * Get port from environment and store in Express.
@@ -22,27 +23,27 @@ var port = normalizePort(process.env.PORT || '8080');
  * Create HTTP server.
  */
 
-var server = http.createServer(app.callback());
+// var server = http.createServer(app.callback());
 
 // 实例化 socket
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"]
+//   }
+// });
 
-io.on("connection", socket => {
-  console.log(socket.id);
+// io.on("connection", socket => {
+//   console.log(socket.id);
 
-  socket.on("hello", data => {
-    console.log(data)
-  })
+//   socket.on("hello", data => {
+//     console.log(data)
+//   })
 
-  socket.on("message", data => console.log(data))
+//   socket.on("message", data => console.log(data))
 
-  // console.log(socket);
-});
+//   // console.log(socket);
+// });
 
 
 /**

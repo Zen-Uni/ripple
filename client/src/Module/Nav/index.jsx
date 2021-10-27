@@ -2,7 +2,7 @@
  * @description nav bar component and styles
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { NavWrapepr } from "./style";
 import { avatarRoot } from '../../fetch'
@@ -13,6 +13,7 @@ import { removeToken } from "../../localStorage";
 
 function Nav(props) {
     const { userAvatar, updateAvatar } = props;
+    const [haveMsg, setHaveMsg] = useState(false);
     useEffect(() => {
         console.log(avatarRoot + userAvatar)
     })
@@ -34,9 +35,19 @@ function Nav(props) {
                 <input type="file" onChange={(e) => handlePostImg(e, updateAvatar)}/>
             </div>
 
+
+            {/* message button */}
+            <div id="tip">
+                {
+                    haveMsg ? <div className="have-message"></div> : null
+                }
+                <i className="iconfont icon-xiaoxi"></i>
+            </div>
+
             <div id="logout" onClick={handleRemoveToken}>
                 <i className="iconfont icon-Logout"></i>
             </div>
+
         </NavWrapepr>
     )
 }

@@ -6,6 +6,8 @@ import { MainWrapper } from "./style";
 import { connect } from "react-redux";
 import { userInfoAction } from "../../store/action";
 import Wrapper from "./Wrapper";
+import fetchEmit from "../../socket";
+// import { getItem } from "../../localStorage";
 function Main(props) {
     const { storeUserMsg } = props; 
     const history = useHistory();
@@ -26,9 +28,13 @@ function Main(props) {
         }
 
         fetchFun();
+   
     }, [])
 
-
+    // useEffect(() => {
+    //     console.log("email --- ", email)
+    //     fetchEmit("storeid", email);
+    // }, [])
     return (
         <MainWrapper>
             {
@@ -46,5 +52,8 @@ const stateToDispatch = dispatch => {
         }
     }
 }
+
+
+
 
 export default connect(null, stateToDispatch)(Main);

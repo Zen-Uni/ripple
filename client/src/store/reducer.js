@@ -2,6 +2,7 @@
  * @description reducer
  */
 
+import fetchEmit from "../socket";
 import { TYPE } from "./action";
 
 const defaultState = {
@@ -21,7 +22,7 @@ const reducer = (state = defaultState, action) => {
         newState.email = action.data.email;
         newState.username = action.data.username;
         newState.avatar = action.data.avatar;
-
+        fetchEmit("storeid", newState.email);
         return newState;
     }
 

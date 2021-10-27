@@ -7,6 +7,6 @@ import styled from "@emotion/styled";
 export const ContentWrapper = styled.div`
     position: relative;
     height: 100%;
-    width: 540px;
+    width: 640px;
     /* background-color: black; */
 `

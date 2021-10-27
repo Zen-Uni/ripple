@@ -19,14 +19,6 @@ const uploads = require("./routes/upload");
 // error handler
 onerror(app)
 
-// Uni use middlewares
-app.use(jwtRightVerify)
-app.use(jwt({
-  secret
-}).unless({
-  path: [/^\/api\/user\//, /^\/avatar\//]
-}))
-
 
 app.use(cors({
   origin: "*",  // 允许 所有的都可以跨域
@@ -36,6 +28,16 @@ app.use(cors({
   allowMethods: ['GET', 'POST', 'DELETE'],
   allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }));
+
+// Uni use middlewares
+app.use(jwtRightVerify)
+app.use(jwt({
+  secret
+}).unless({
+  path: [/^\/api\/user\//, /^\/avatar\//]
+}))
+
+
 
 
 // middlewares
