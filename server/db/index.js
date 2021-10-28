@@ -34,10 +34,10 @@ const socketSchema = new Schema({
 })
 
 const tipSchema = new Schema({
-    from: {
+    fromEmail: {
         type: String
     },
-    to: {
+    toEmail: {
         type: String
     },
     status: {
@@ -52,11 +52,12 @@ const tipSchema = new Schema({
 /************************ define mongoose Schema  ---  end **************/
 const UserModel = model("Users", userSchema)
 const SocketModel = model("Sockets", socketSchema);
-
+const TipModel = model("Tips", tipSchema);
 
 module.exports = {
     UserModel,
-    SocketModel
+    SocketModel,
+    TipModel
 }
 
 

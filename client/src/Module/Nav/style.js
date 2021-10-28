@@ -9,7 +9,7 @@ export const NavWrapepr = styled.div`
     height: 100%;
     width: 80px;
     /* background-color: rgba(143,188,143, .8); */
-    background-color: rgba(0,139,139, 0.8);
+    background-color: rgba(0,139,139, 0.9);
 
     justify-content: center;
     display: flex;
@@ -52,6 +52,19 @@ export const NavWrapepr = styled.div`
             border-radius: 5px;
             background-color: red;
         }
+
+        & #req-list {
+            position: absolute;
+            left: 45px;
+            /* top:800px; */
+            top: -220px;
+            height: 300px;
+            width: 240px;
+            background-color: rgba(255, 255, 255, .8);
+            overflow-y: scroll;
+            z-index: 100;
+            border-radius: 7px;
+        }
     }
 
     & #logout {
@@ -64,4 +77,6 @@ export const NavWrapepr = styled.div`
             color: white;
         }
     }
+    
 `
+

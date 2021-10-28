@@ -15,6 +15,7 @@ const { jwtRightVerify, secret } = require("./utils/jwt")
 const index = require('./routes/index')
 const users = require('./routes/users')
 const uploads = require("./routes/upload");
+const friends = require("./routes/friend");
 
 // error handler
 onerror(app)
@@ -64,6 +65,7 @@ app.use(async (ctx, next) => {
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(uploads.routes(), uploads.allowedMethods())
+app.use(friends.routes(), friends.allowedMethods())
 
 
 // error-handling

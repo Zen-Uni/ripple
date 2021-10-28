@@ -8,7 +8,8 @@ import { TYPE } from "./action";
 const defaultState = {
     username: "",
     email: "",
-    avatar: ""
+    avatar: "",
+    req: false
 }
 
 const serialize = state => {
@@ -30,6 +31,17 @@ const reducer = (state = defaultState, action) => {
         const newState = serialize(state);
         newState.avatar = action.data;
 
+        return newState;
+    }
+
+    if (action.type === TYPE.updateReq) {
+        const newState = serialize(state);
+        
+        newState.req = action.data;
+
+        if (newState.req) {
+            console.log("kkkkkkkkkko")
+        }
         return newState;
     }
 

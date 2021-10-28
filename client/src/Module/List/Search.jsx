@@ -3,14 +3,16 @@
  */
 
 import { useRef, useState } from "react";
-import { avatarRoot, findUser } from "../../fetch";
+import { avatarRoot, findUser, reqAddUser } from "../../fetch";
 import { ResBoxWrapper, ResWrapper, SearchWrapper } from "./style";
-
+import { message } from 'antd';
+import fetchEmit from "../../socket";
 function Search() {
     const [resBox, setresBox] = useState(false);
     const [msg, setMsg] = useState(false);
     const [userAvatar, setUserAvatar] = useState("");
     const [username, setUsername] = useState("");
+    const [to, setTo] = useState("");
     const inputEl = useRef(null);
     const handleSearch = async e => {
         if (e.keyCode === 13) {
@@ -18,10 +20,12 @@ function Search() {
             const email = inputEl.current.value;
             console.log("email --- ", email);
             const {code, data} = await findUser({email});
+            console.log(data);
             if (!code) {
-                const { username, avatar } = data;
+                const { username, avatar, email } = data;
                 setUserAvatar(avatar);
                 setUsername(username);
+                setTo(email);
                 setMsg(true);
             } else {
                 setMsg(false);
@@ -29,8 +33,14 @@ function Search() {
         }
     }
 
-    const handleAddUser = () => {
-        console.log('click');
+    const handleAddUser = async() => {
+        const { code, msg, data } = await reqAddUser({to});
+        console.log(data);
+        if (!code) {
+            message.success(msg);
+            console.log("sid --- ", data.sid);
+            fetchEmit("friend-request", data.sid);
+        }
     }
 
     const handleBlur = () => {
@@ -49,7 +59,7 @@ function Search() {
             {/* TODO: 添加好友前端 */}
             {
                 resBox ? <ResBoxWrapper>
-                    {
+                    {   
                         msg ? (
                             <ResWrapper>
                                 <div className="avatar" style={{

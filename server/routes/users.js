@@ -60,10 +60,7 @@ router.post('/find', async (ctx, next) => {
   ctx.body =  await handleSearchUser(email);
 })
 
-// TODO：好友请求
-router.post('/friend-request', async (ctx, next) => {
-  
-})
+
 
 
 module.exports = router

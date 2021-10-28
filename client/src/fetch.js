@@ -56,3 +56,13 @@ export const uploadAvatar = async (data) => {
 export const findUser = async (data) => {
     return await fetch("post", "/user/find", data);
 }
+
+export const reqAddUser = async (data) => {
+    return await fetch("post", "/friend/request", data);
+}
+
+
+// 获取好友请求列表
+export const reqAddList = async () => {
+    return await fetch("get", "/friend/req-list");
+}

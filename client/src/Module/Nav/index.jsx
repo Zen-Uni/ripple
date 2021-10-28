@@ -5,17 +5,18 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { NavWrapepr } from "./style";
-import { avatarRoot } from '../../fetch'
+import { avatarRoot, reqAddList } from '../../fetch'
 import { handlePostImg } from "../../utils/postImg";
 import { updateAvatarAction } from "../../store/action";
 import { removeToken } from "../../localStorage";
 
 
 function Nav(props) {
-    const { userAvatar, updateAvatar } = props;
-    const [haveMsg, setHaveMsg] = useState(false);
+    const { userAvatar, updateAvatar, haveMsg } = props;
+    // const [haveMsg, setHaveMsg] = useState(false);
     useEffect(() => {
-        console.log(avatarRoot + userAvatar)
+        // console.log(avatarRoot + userAvatar)
+        
     })
     // useEffect(() => {
     //     const avatarDom = document.getElementById("id")
@@ -25,6 +26,12 @@ function Nav(props) {
     const handleRemoveToken = () => {
         removeToken();
         window.location.href = "/"
+    }
+
+    const handleAddList = async() => {
+        const res = await reqAddList();
+        // console.log('clickkkk');
+        console.log(res);
     }
 
     return (
@@ -37,24 +44,31 @@ function Nav(props) {
 
 
             {/* message button */}
-            <div id="tip">
+            <div id="tip" onClick={handleAddList}>
                 {
                     haveMsg ? <div className="have-message"></div> : null
                 }
                 <i className="iconfont icon-xiaoxi"></i>
+                <div id="req-list">
+                </div>
             </div>
 
             <div id="logout" onClick={handleRemoveToken}>
                 <i className="iconfont icon-Logout"></i>
             </div>
 
+{/* TODO: 请求列表滚轴 */}
+
+           
+       
         </NavWrapepr>
     )
 }
 
 const stateToProps = state => {
     return {
-        userAvatar: state.avatar
+        userAvatar: state.avatar,
+        haveMsg: state.req
     }
 }
 

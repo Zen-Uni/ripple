@@ -8,6 +8,7 @@ const app = require('./app');
 const {handleStoreSocket} = require('./controller/message')
 
 
+
 const server = http.createServer(app.callback());
 
 
@@ -22,6 +23,10 @@ const io = new Server(server, {
 io.on("connection", socket => {
     console.log(socket.id);
 
+   socket.on("friend-request", sid => {
+       socket.to(sid).emit("friend-request", 1)
+   })
+
     socket.on("storeid", async email => {
         console.log(email)
         const res = await handleStoreSocket(email, socket.id);
@@ -33,6 +38,7 @@ io.on("connection", socket => {
 // console.log(socket);
 });
 
+// emitter.emit("friend-add-request", "hll")
 
 
-module.exports = server;
+module.exports = server

@@ -5,7 +5,8 @@
 
 export const TYPE = {
     userInfo: "userInfo",
-    updateAvatar: "updateAvatar"
+    updateAvatar: "updateAvatar",
+    updateReq: "updateReq"
 }
 
 // 更新全局用户信息
@@ -21,5 +22,13 @@ export const updateAvatarAction = data => {
     return {
         type: TYPE.updateAvatar,
         data
+    }
+}
+
+// 更新消息提示 （好友请求）
+export const updateReqAction = () => {
+    return {
+        type: TYPE.updateReq,
+        data: true
     }
 }
