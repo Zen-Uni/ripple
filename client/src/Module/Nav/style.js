@@ -60,10 +60,108 @@ export const NavWrapepr = styled.div`
             top: -220px;
             height: 300px;
             width: 240px;
-            background-color: rgba(255, 255, 255, .8);
-            overflow-y: scroll;
+            background-color: rgba(255, 255, 255, .6);
+            overflow-y: hidden;
+            overflow-x: hidden;
             z-index: 100;
             border-radius: 7px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, .5);
+            scrollbar-width: none;
+            -ms-overflow-style: none; 
+            ::-webkit-scrollbar {
+                display: none; 
+            }
+            cursor: auto;
+            & #req-list-cancel {
+                position: absolute;
+                right: 7px;
+                top: 5px;
+                padding: 2px 5px;
+                cursor: pointer;
+                & i {
+                    font-size: 14px;
+                    color: black;
+                }
+
+                &:hover {
+                    background-color: white;
+                }
+            }
+            & .req-list-title {
+                height: 30px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            & .req-item-box {
+                overflow-y: auto;
+                overflow-x: hidden;
+                width: 100%;
+                height: 270px;
+                scrollbar-width: none;
+                -ms-overflow-style: none; 
+                ::-webkit-scrollbar {
+                    display: none; 
+                }
+                /* background-color: pink; */
+                /* margin-top: 30px; */
+                & .req-item {
+                    position: relative;
+                    height: 60px;
+                    width: 100%;
+                    /* background-color: yellow; */
+                    & div {
+                        position: absolute;
+                    }
+                    & .req-item-avatar {
+                        height: 50px;
+                        width: 50px;
+                        /* background-color: black; */
+                        border-radius: 50px;
+                        top: 5px;
+                        left: 5px;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                    }
+
+                    & .req-item-username {
+                        left: 70px;
+                        height: 40px;
+                        top: 10px;
+                        width: 100px;
+                        line-height: 40px;
+                        font-size: 14px;
+                        /* background-color: black; */
+                    }
+
+                    & .req-item-select {
+                        height: 40px;
+                        width: 60px;
+                        /* background-color: pink; */
+                        right: 5px;
+                        top: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-around;
+                        & .iconfont {
+                            transition: all .3s ease;
+                        }
+                        & .iconfont:hover {
+                            font-size: 30px;
+                        }
+                        & .icon-jujue {
+                            color: rgba(220,20,60, .8);
+                            cursor: pointer;
+                        }
+                        & .icon-tongyi1 {
+                            color: rgba(60,179,113, .8);
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
         }
     }
 
