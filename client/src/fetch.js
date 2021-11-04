@@ -75,3 +75,7 @@ export const reqMakeFriend = async data => {
 export const reqFriendList = async () => {
     return await fetch('get', '/friend/friend-list');
 }
+
+export const reqMessageHistory = async (data) => {
+    return await fetch('post', '/friend/get-message', data);
+}

@@ -2,7 +2,7 @@
  * @description some functions about socket
  */
 
-const { SocketModel } = require("../db")
+const { SocketModel, MessageModel } = require("../db")
 const { SuccessfulModel } = require("../utils/ResultModel")
 
 const handleStoreSocket = (email, sid) => {
@@ -26,6 +26,27 @@ const handleStoreSocket = (email, sid) => {
     })
 }
 
+
+const handleReqMessage = (email, femail) => {
+    const arr = [];
+    arr.push(email); arr.push(femail);
+    arr.sort();
+    const to = arr[0] + arr[1];
+    console.log('to ----', to);
+    return new Promise(async(resolve, reject) => {
+      
+        const res = await MessageModel.find({
+            to
+        }).exec();
+        console.log(res);
+        
+        resolve(new SuccessfulModel({
+            message: res
+        }));
+    })
+}
+
 module.exports = {
-    handleStoreSocket
+    handleStoreSocket,
+    handleReqMessage
 }

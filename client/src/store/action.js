@@ -9,7 +9,11 @@ export const TYPE = {
     userInfo: "userInfo",
     updateAvatar: "updateAvatar",
     updateReq: "updateReq",
-    updateFriendList: "updateFriendList"
+    updateFriendList: "updateFriendList",
+    updateCurrentChat: "updateCurrentChat",
+    getMessageHistory: "getMessageHistory",
+    updateChatAvatar: "updateChatAvatar",
+    updateMessage: "updateMessage"
 }
 
 // 更新全局用户信息
@@ -50,4 +54,36 @@ export const updateFriendListAction = () => {
         resolve(action);
     })
 
+}
+
+// 更新当前聊天对象
+export const updateCurrentChatAction = (data) => {
+    return {
+        type: TYPE.updateCurrentChat,
+        data
+    }
+}
+
+// 获取历史聊天记录
+export const getMessageHistoryAction = (data) => {
+    return {
+        type: TYPE.getMessageHistory,
+        data
+    }
+}
+
+// 更新聊天聊天对象头像
+export const updateChatAvatarAction = (data) => {
+    return {
+        type: TYPE.updateChatAvatar,
+        data
+    }
+}
+
+// 更新聊天记录
+export const updateMessage = data => {
+    return {
+        type: TYPE.updateMessage,
+        data
+    }
 }

@@ -169,22 +169,29 @@ const handleFriendList = (token) => {
 
     return new Promise(async(resolve, reject) => {
         const res = await FriendModel.findOne({email}).exec();
-        const { femail } = res;
-        const list = [];
-        for (const item of femail) {
-            const { username, avatar } = await UserModel.findOne({
-                email: item       
-            }).exec();
-            const obj = {
-                email: item,
-                username,
-                avatar
+        if (res === null) {
+            resolve(new SuccessfulModel({
+                list: []
+            }))
+        } else {
+            const { femail } = res;
+            const list = [];
+            for (const item of femail) {
+                const { username, avatar } = await UserModel.findOne({
+                    email: item       
+                }).exec();
+                const obj = {
+                    email: item,
+                    username,
+                    avatar
+                }
+                list.push(obj);
             }
-            list.push(obj);
+            resolve(new SuccessfulModel({
+                list
+            }));
         }
-        resolve(new SuccessfulModel({
-            list
-        }));
+       
     })
 }
 

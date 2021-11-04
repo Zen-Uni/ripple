@@ -3,6 +3,7 @@
  */
 
 const { handleFriendReq, handleReqList, handleMakeFriend, handleFriendList } = require('../controller/friend');
+const { handleReqMessage } = require('../controller/message');
 
 const router = require('koa-router')()
 
@@ -35,6 +36,13 @@ router.post('/make-friends', async (ctx, next) => {
 router.get('/friend-list', async (ctx, next) => {
     const token = ctx.headers.authorization;
     ctx.body = await handleFriendList(token)
+})
+
+/*************** message routes ********************/
+router.post('/get-message', async (ctx, next) => {
+    const { email, femail } = ctx.request.body;
+    ctx.body = await handleReqMessage(email, femail);
+
 })
 
 module.exports = router;

@@ -46,7 +46,7 @@ const tipSchema = new Schema({
     }
 })
 
-// TODO: friend schema
+
 const friendSchema = new Schema({
     email: {
         type: String,
@@ -55,19 +55,32 @@ const friendSchema = new Schema({
     femail: Array
 });
 
+// TODO: message schema
+const messageSchema = new Schema({
+    from: String,
+    to: String,
+    createTime: {
+        type: Date,
+        default: Date.now,
+        index: true
+    },
+    content: String
+})
+
 
 /************************ define mongoose Schema  ---  end **************/
 const UserModel = model("Users", userSchema)
 const SocketModel = model("Sockets", socketSchema);
 const TipModel = model("Tips", tipSchema);
 const FriendModel = model("Friends", friendSchema);
-
+const MessageModel = model("messages", messageSchema);
 
 module.exports = {
     UserModel,
     SocketModel,
     TipModel,
-    FriendModel
+    FriendModel,
+    MessageModel
 }
 
 

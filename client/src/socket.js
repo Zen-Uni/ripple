@@ -7,7 +7,7 @@
 
 import { io } from "socket.io-client";
 import store from "./store"
-import { updateReqAction } from "./store/action";
+import { updateMessage, updateReqAction } from "./store/action";
 const socket = io("http://localhost:8080");
 const {dispatch} = store;
 
@@ -27,6 +27,14 @@ socket.on("friend-request", data => {
         const action  = updateReqAction();
         dispatch(action);
     }
+});
+
+socket.on('chat', data => {
+    console.log('send from email', data.from);
+    console.log('content --- ', data.content);
+
+    const action = updateMessage(data);
+    dispatch(action);
 })
 
 const fetchEmit = (event, data) => {

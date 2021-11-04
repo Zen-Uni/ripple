@@ -56,6 +56,7 @@ export const ResBoxWrapper = styled.div`
         justify-content: center;
         align-items: center;
     }
+    z-index: 1000;
 `
 
 export const ResWrapper = styled.div`
@@ -122,8 +123,16 @@ export const FriendListBox = styled.div`
         position: relative;
         height: 60px;
         width: 100%;
+        transition: all .3s ease;
         /* background-color: black; */
+        &:hover {
+            background-color: rgba(95,158,160, 1);
+            cursor: pointer;
+        }
 
+        &.item-active {
+            background-color: rgba(95,158,160, 1);
+        }
 
         & .item-avatar {
             position: absolute;
