@@ -66,3 +66,12 @@ export const reqAddUser = async (data) => {
 export const reqAddList = async () => {
     return await fetch("get", "/friend/req-list");
 }
+
+
+export const reqMakeFriend = async data => {
+    return await fetch('post', "/friend/make-friends", data);
+}
+
+export const reqFriendList = async () => {
+    return await fetch('get', '/friend/friend-list');
+}

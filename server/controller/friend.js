@@ -2,7 +2,7 @@
  * @description about user search friends, add friends and so on
  */
 
-const { UserModel, TipModel, SocketModel } = require("../db");
+const { UserModel, TipModel, SocketModel, FriendModel } = require("../db");
 
 // const EventEmitter = require('events').EventEmitter;
 // const emitter = new EventEmitter();
@@ -94,8 +94,104 @@ const handleReqList = token => {
     })
 }
 
+
+const handleMakeFriend = (token, femail) => {
+    const { data } = parseToken(token);
+    const { email } = data;
+    return new Promise(async(resolve, reject) => {
+        const res = await FriendModel.findOne({
+            email
+        }).exec();
+
+        if( res === null ) {
+            const relation = new FriendModel({
+                email,
+                femail
+            });
+            await relation.save();
+        } else {
+            const femailList = res.femail;
+            femailList.push(femail);
+            await FriendModel.updateOne({
+                email
+            }, {
+                femail: femailList
+            });
+        }
+
+        const res2 = await FriendModel.findOne({
+            email: femail
+        }).exec();
+
+        if (res2 === null) {
+            const relation = new FriendModel({
+                email: femail,
+                femail: email
+            });
+            await relation.save();
+        } else {
+            const femailList = res2.femail;
+            femailList.push(email);
+            await FriendModel.updateOne({
+                email: femail
+            }, {
+                femail: femailList
+            });
+        }
+
+       try {
+            await TipModel.updateMany({
+                fromEmail: femail,
+                toEmail: email
+            }, {
+                status: 2
+            });
+            const tip = new TipModel({
+                fromEmail: email,
+                toEmail: femail,
+                status: 2
+            });
+            await tip.save();
+            resolve(new SuccessfulModel("好友添加成功"));
+       } catch (err) {
+           console.log(err);
+           resolve(new ErrorModel("好友添加失败"));
+       }
+
+    })
+}
+
+
+// 获取好友列表
+const handleFriendList = (token) => {
+    const { data } = parseToken(token);
+    const { email } = data;
+
+    return new Promise(async(resolve, reject) => {
+        const res = await FriendModel.findOne({email}).exec();
+        const { femail } = res;
+        const list = [];
+        for (const item of femail) {
+            const { username, avatar } = await UserModel.findOne({
+                email: item       
+            }).exec();
+            const obj = {
+                email: item,
+                username,
+                avatar
+            }
+            list.push(obj);
+        }
+        resolve(new SuccessfulModel({
+            list
+        }));
+    })
+}
+
 module.exports = {
     handleSearchUser,
     handleFriendReq,
-    handleReqList
+    handleReqList,
+    handleMakeFriend,
+    handleFriendList
 }

@@ -2,7 +2,7 @@
  * @description friend request route
  */
 
-const { handleFriendReq, handleReqList } = require('../controller/friend');
+const { handleFriendReq, handleReqList, handleMakeFriend, handleFriendList } = require('../controller/friend');
 
 const router = require('koa-router')()
 
@@ -22,5 +22,19 @@ router.get("/req-list", async (ctx, next) => {
     ctx.body = await handleReqList(token);
 })
 
+
+// 建立好友关系
+router.post('/make-friends', async (ctx, next) => {
+    const token = ctx.headers.authorization;
+    const { email } = ctx.request.body;
+    ctx.body = await handleMakeFriend(token, email);
+})
+
+
+// 查询好友列表
+router.get('/friend-list', async (ctx, next) => {
+    const token = ctx.headers.authorization;
+    ctx.body = await handleFriendList(token)
+})
 
 module.exports = router;

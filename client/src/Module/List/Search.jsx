@@ -35,11 +35,13 @@ function Search() {
 
     const handleAddUser = async() => {
         const { code, msg, data } = await reqAddUser({to});
-        console.log(data);
+        console.log(msg);
         if (!code) {
             message.success(msg);
             console.log("sid --- ", data.sid);
             fetchEmit("friend-request", data.sid);
+        } else {
+            message.warning(msg);
         }
     }
 
@@ -56,7 +58,6 @@ function Search() {
                 ref={inputEl}
                 onBlur={handleBlur}
             />
-            {/* TODO: 添加好友前端 */}
             {
                 resBox ? <ResBoxWrapper>
                     {   

@@ -2,11 +2,14 @@
  * @description action
  */
 
+import { reqFriendList } from "../fetch"
+
 
 export const TYPE = {
     userInfo: "userInfo",
     updateAvatar: "updateAvatar",
-    updateReq: "updateReq"
+    updateReq: "updateReq",
+    updateFriendList: "updateFriendList"
 }
 
 // 更新全局用户信息
@@ -31,4 +34,20 @@ export const updateReqAction = () => {
         type: TYPE.updateReq,
         data: true
     }
+}
+
+// 更新好友列表 (在此请求)
+export const updateFriendListAction = () => {
+    return new Promise(async(resolve, reject) => {
+        const { data } = await reqFriendList()
+        const { list } = data;
+
+        const action = {
+            type: TYPE.updateFriendList,
+            data: list
+        };
+
+        resolve(action);
+    })
+
 }

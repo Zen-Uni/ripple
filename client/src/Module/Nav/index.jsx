@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { NavWrapepr } from "./style";
-import { avatarRoot, reqAddList } from '../../fetch'
+import { avatarRoot, reqAddList, reqMakeFriend } from '../../fetch'
 import { handlePostImg } from "../../utils/postImg";
 import { updateAvatarAction } from "../../store/action";
 import { removeToken } from "../../localStorage";
@@ -45,6 +45,12 @@ function Nav(props) {
         setShowList(false);
     }
 
+    const handleMakeFriend = async (email) => {
+        const res = await reqMakeFriend({email});
+        console.log(res);
+   
+    }
+
     return (
         <NavWrapepr>
             <div id="avatar" style={{
@@ -71,7 +77,7 @@ function Nav(props) {
                             {
                                 reqList.map((item) => {
                                     return (
-                                        <div className="req-item">
+                                        <div className="req-item" key={item.eamil + item.username}>
                                             <div className="req-item-avatar" 
                                                 style={{
                                                     backgroundImage: `url(${avatarRoot+item.avatar})`
@@ -80,7 +86,7 @@ function Nav(props) {
                                             <div className="req-item-username">{item.username}</div>
                                             <div className="req-item-select">
                                                 <i className="iconfont icon-jujue"></i>
-                                                <i className="iconfont icon-tongyi1"></i>
+                                                <i className="iconfont icon-tongyi1" onClick={handleMakeFriend.bind(this,item.email)}></i>
                                             </div>
                                         </div>
                                     )

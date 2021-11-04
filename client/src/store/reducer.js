@@ -9,7 +9,8 @@ const defaultState = {
     username: "",
     email: "",
     avatar: "",
-    req: false
+    req: false,
+    friendList: []
 }
 
 const serialize = state => {
@@ -20,7 +21,7 @@ const reducer = (state = defaultState, action) => {
 
     if (action.type === TYPE.userInfo) {
         const newState = serialize(state);
-        newState.email = action.data.email;
+        newState.email = action.data.email; 
         newState.username = action.data.username;
         newState.avatar = action.data.avatar;
         fetchEmit("storeid", newState.email);
@@ -42,6 +43,14 @@ const reducer = (state = defaultState, action) => {
         if (newState.req) {
             console.log("kkkkkkkkkko")
         }
+        return newState;
+    }
+
+    // update friend list
+    if (action.type === TYPE.updateFriendList) {
+        const newState = serialize(state);
+        newState.friendList = action.data;
+
         return newState;
     }
 

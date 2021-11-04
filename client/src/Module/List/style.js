@@ -110,3 +110,48 @@ export const ResWrapper = styled.div`
     }
 `
 
+export const FriendListBox = styled.div`
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* background-color: black; */
+
+    & .list-item {
+        position: relative;
+        height: 60px;
+        width: 100%;
+        /* background-color: black; */
+
+
+        & .item-avatar {
+            position: absolute;
+            height: 50px;
+            width: 50px;
+            /* background-color: yellow; */
+            border-radius: 50px;
+            top: 5px;
+            left: 10px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        & .item-text {
+            position: absolute;
+            height: 100%;
+            width: 200px;
+            left: 70px;
+            /* background-color: pink; */
+        }
+
+        & .item-username {
+            height: 100%;
+            width: 100%;
+            line-height: 60px;
+            font-size: 18px;
+            font-weight: 300;
+        }
+    }
+`
