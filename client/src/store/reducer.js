@@ -15,7 +15,8 @@ const defaultState = {
     // 存储当前聊天对象的 email
     currentChat: "",
     message: [],
-    chatAvatar: ""
+    chatAvatar: "",
+    chatUsername: ""
 }
 
 const serialize = state => {
@@ -84,6 +85,13 @@ const reducer = (state = defaultState, action) => {
     if (action.type === TYPE.updateMessage) {
         const newState = serialize(state);
         newState.message.push(action.data);
+
+        return newState;
+    }
+
+    if (action.type === TYPE.updateChatUsername) {
+        const newState = serialize(state);
+        newState.chatUsername = action.data;
 
         return newState;
     }

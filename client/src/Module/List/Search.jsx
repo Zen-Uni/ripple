@@ -7,7 +7,9 @@ import { avatarRoot, findUser, reqAddUser } from "../../fetch";
 import { ResBoxWrapper, ResWrapper, SearchWrapper } from "./style";
 import { message } from 'antd';
 import fetchEmit from "../../socket";
-function Search() {
+import { connect } from "react-redux";
+function Search(props) {
+    const { email } = props;
     const [resBox, setresBox] = useState(false);
     const [msg, setMsg] = useState(false);
     const [userAvatar, setUserAvatar] = useState("");
@@ -34,6 +36,10 @@ function Search() {
     }
 
     const handleAddUser = async() => {
+        if (email === to) {
+            message.warning("不能添加自己为好友");
+            return;
+        }
         const { code, msg, data } = await reqAddUser({to});
         console.log(msg);
         if (!code) {
@@ -77,4 +83,10 @@ function Search() {
     )
 }
 
-export default Search;
+const stateToProps = state => {
+    return {
+        email: state.email
+    }
+}
+
+export default connect(stateToProps, null)(Search);

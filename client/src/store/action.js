@@ -13,7 +13,8 @@ export const TYPE = {
     updateCurrentChat: "updateCurrentChat",
     getMessageHistory: "getMessageHistory",
     updateChatAvatar: "updateChatAvatar",
-    updateMessage: "updateMessage"
+    updateMessage: "updateMessage",
+    updateChatUsername: "updateChatUsername"
 }
 
 // 更新全局用户信息
@@ -84,6 +85,14 @@ export const updateChatAvatarAction = (data) => {
 export const updateMessage = data => {
     return {
         type: TYPE.updateMessage,
+        data
+    }
+}
+
+// 更新聊天对象昵称
+export const updateChatUsernameAction = data => {
+    return {
+        type: TYPE.updateChatUsername,
         data
     }
 }

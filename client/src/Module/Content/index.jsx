@@ -11,7 +11,7 @@ import fetchEmit from "../../socket";
 import { avatarRoot } from "../../fetch";
 import { updateMessage } from "../../store/action";
 function Content(props) {
-    const { conversation, email, femail, message, userAvatar, chatAvatar, handleUpdateMessage } = props;
+    const { userName, email, femail, message, userAvatar, chatAvatar, handleUpdateMessage } = props;
 
     const inputEl = useRef(null);
 
@@ -36,26 +36,32 @@ function Content(props) {
     }
 
     useEffect(() => {
-        const el = document.querySelector("#message-box-wrapper");
-        el.scrollTop = el.scrollHeight
+        if (femail) {
+            const el = document.querySelector("#message-box-wrapper");
+            el.scrollTop = el.scrollHeight;
+        }
     })
     return (
         <ContentWrapper>
             {
                 // 注意顺序
-                conversation ? null : (
+                !femail ? null : (
                    <>
+                        {
+                            femail ? <div className="message-box-title">{userName}</div> : null
+                        }
                         <MessageBox id="message-box-wrapper">
                             {/* <div className="message-title"></div> */}
                             {/* <div className="message-box">
                                 <div className="message-avatar"></div>
                                 <div className="message-context"></div>
                             </div> */}
+                            
                             {
-                                message.map(item => {
+                                message.map((item, index) => {
                                     const avatar = item.from === email ? userAvatar : chatAvatar
                                     return (
-                                        <div className={item.from === email ? "message-box message-box-right" : "message-box message-box-left"}>
+                                        <div key={item.from + index} className={item.from === email ? "message-box message-box-right" : "message-box message-box-left"}>
                                             <div className="message-avatar"
                                                 style={{
                                                     backgroundImage: `url(${avatarRoot + avatar})`
@@ -84,7 +90,8 @@ const stateToProps = state => {
         femail: state.currentChat,
         message: state.message,
         userAvatar: state.avatar,
-        chatAvatar: state.chatAvatar
+        chatAvatar: state.chatAvatar,
+        userName: state.chatUsername
     }
 }
 

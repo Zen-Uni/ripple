@@ -7,12 +7,14 @@ import { connect } from "react-redux";
 import { NavWrapepr } from "./style";
 import { avatarRoot, reqAddList, reqMakeFriend } from '../../fetch'
 import { handlePostImg } from "../../utils/postImg";
-import { updateAvatarAction } from "../../store/action";
+import { updateAvatarAction, updateFriendListAction } from "../../store/action";
 import { removeToken } from "../../localStorage";
+import { message } from "antd";
+
 
 
 function Nav(props) {
-    const { userAvatar, updateAvatar, haveMsg } = props;
+    const { userAvatar, updateAvatar, haveMsg, handleFriendList } = props;
     const [reqList, setReqList] = useState(null);
     const [showList, setShowList] = useState(false);
     // const [haveMsg, setHaveMsg] = useState(false);
@@ -33,11 +35,9 @@ function Nav(props) {
     const handleAddList = async() => {
         const res = await reqAddList();
         const { data } = res;
-        // console.log('clickkkk');
         console.log(res);
         setReqList(data.list);
         setShowList(true);
-        
     }
 
     const handleCloseList = (e) => {
@@ -46,8 +46,12 @@ function Nav(props) {
     }
 
     const handleMakeFriend = async (email) => {
-        const res = await reqMakeFriend({email});
-        console.log(res);
+        const { code, msg } = await reqMakeFriend({email});
+        if (code === 0) {
+            message.success(msg);
+            handleAddList();
+            await handleFriendList();
+        }
    
     }
 
@@ -72,7 +76,7 @@ function Nav(props) {
                             <div id="req-list-cancel" onClick={handleCloseList}>
                                 <i className="iconfont icon-quxiao"></i>
                             </div>
-                            <div className="req-list-title">好友请求</div>
+                            <div className="req-list-title">Friend Request List</div>
                             <div className="req-item-box" onClick={e => e.stopPropagation()}>
                             {
                                 reqList.map((item) => {
@@ -121,6 +125,10 @@ const stateToDispatch = dispatch => {
     return {
         updateAvatar(data) {
             const action = updateAvatarAction(data);
+            dispatch(action);
+        },
+        async handleFriendList() {
+            const action = await updateFriendListAction();
             dispatch(action);
         }
     }

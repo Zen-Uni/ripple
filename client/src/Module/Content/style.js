@@ -9,6 +9,18 @@ export const ContentWrapper = styled.div`
     height: 100%;
     width: 640px;
     /* background-color: black; */
+    & .message-box-title {
+        position: sticky;
+        top: 0;
+        height: 50px;
+        width: 100%;
+        /* background-color: rgba(95,158,160, 1); */
+        background-color: rgba(255,255,255, .4);
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 `
 
 export const MessageBox = styled.div`
@@ -19,8 +31,25 @@ export const MessageBox = styled.div`
     overflow-x: hidden;
     overflow-y: auto;
     box-sizing: border-box;
-    padding: 10px;
+    padding: 0px;
 
+    &::-webkit-scrollbar {
+        width: 4px;    
+        /*height: 4px;*/
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        background: rgba(0,0,0,0.1);
+    }
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        border-radius: 0;
+        /* background: rgba(0,0,0,0.1); */
+
+    }
+
+    
 
     & .message-box {
         /* height: 50px; */
@@ -31,12 +60,15 @@ export const MessageBox = styled.div`
     }
 
     & .message-box-left {
+        padding-left: 10px;
         & div {
             float: left;
         }
     }
 
     & .message-box-right {
+        padding-right: 10px;
+       
         & div {
             float: right;
         }
