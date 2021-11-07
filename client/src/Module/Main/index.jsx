@@ -22,7 +22,7 @@ function Main(props) {
             } else {
                 setLoading(false);
                 storeUserMsg(data);
-                message.success("登陆成功!");
+                message.success("login successfully");
                 
             }
         }

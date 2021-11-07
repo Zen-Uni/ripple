@@ -22,11 +22,11 @@ const updateAvatar =  (email, url) => {
        }, (err, data) => {
            if (err)  {
                console.log(err);
-               resolve(new ErrorModel("头像更新失败，可能是图片太大了～"))
+               resolve(new ErrorModel("Profile picture update failed"))
            } else {
                resolve(new SuccessfulModel({
                    avatar: url
-               },"头像更新成功～"))
+               },"Profile picture updated successfully"))
            }
        })
     })

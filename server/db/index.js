@@ -8,6 +8,7 @@ const { Schema, model } = require('./connect')
 
 /************************ define mongoose Schema  ---  begin **************/
 
+// user table
 const userSchema = new Schema({
     email: {
         type: String,
@@ -24,7 +25,7 @@ const userSchema = new Schema({
     }
 });
 
-
+// socket message table, use to store user's websocket id
 const socketSchema = new Schema({
     email: {
         type: String,
@@ -32,7 +33,7 @@ const socketSchema = new Schema({
     },
     sid: String
 })
-
+// tip table, use to store user's friend request
 const tipSchema = new Schema({
     fromEmail: {
         type: String
@@ -45,8 +46,7 @@ const tipSchema = new Schema({
         default: 0
     }
 })
-
-
+// friend table, use to store user's relationship
 const friendSchema = new Schema({
     email: {
         type: String,
@@ -55,7 +55,7 @@ const friendSchema = new Schema({
     femail: Array
 });
 
-// TODO: message schema
+// message schema, use to store uses' history message by communication
 const messageSchema = new Schema({
     from: String,
     to: String,

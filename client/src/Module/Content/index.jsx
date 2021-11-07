@@ -74,7 +74,7 @@ function Content(props) {
                             }
                         </MessageBox>
                         <ChatBox>
-                            <div ref={inputEl} contentEditable id="chat-input" placeholder="发表点什么吧～" onKeyDown={(e) => handleChating(e)}></div>
+                            <div ref={inputEl} contentEditable id="chat-input" placeholder="Press Enter to send the chat message~" onKeyDown={(e) => handleChating(e)}></div>
                         </ChatBox>
                    </>
                 )

@@ -11,9 +11,9 @@ const emailCheck = (email) => {
     return new Promise(async (resolve, reject) => {
         const res = await UserModel.findOne({email}).exec();
         if (res === null) {
-            resolve(new SuccessfulModel("邮箱可用"));
+            resolve(new SuccessfulModel("Email is available"));
         } else {
-            resolve(new ErrorModel("邮箱不可用"));
+            resolve(new ErrorModel("Email not available"));
         }
     })
 }
@@ -30,13 +30,13 @@ const userRegister =  (userMsg) => {
         const res = new SuccessfulModel({
             token, 
             username
-        }, "用户注册成功");
+        }, "User registration succeeded");
 
         resolve(res);
        } catch (err) {
            console.log(err);
-           console.log("该用户已存在");
-           resolve(new ErrorModel("该用户已存在"));
+           console.log("The user already exists");
+           resolve(new ErrorModel("The user already exists"));
        }
     })   
 }
@@ -47,7 +47,7 @@ const userLogin = (userMsg) => {
     return new Promise(async (resolve, reject) => {
         const res = await UserModel.findOne(userMsg).exec();
         if (res == null) {
-            resolve(new ErrorModel("尚未注册"));
+            resolve(new ErrorModel("Have not yet registered"));
         } else {
             const { email } = userMsg;
             const { username } = res;
@@ -55,7 +55,7 @@ const userLogin = (userMsg) => {
             resolve(new SuccessfulModel({
                 token,
                 username
-            }, "登陆成功"))
+            }, "login successfully"))
         }
 
     })
@@ -75,7 +75,7 @@ const tokenCheck = (token) => {
                     email: res.data.email
                 }).exec();
                 if (user == null) {
-                    resolve(new ErrorModel("解析 token 失败"));
+                    resolve(new ErrorModel("Token Parsing failed"));
                 } else {
                     const { username, email, avatar } = user;
                     const resMsg = {username, email, avatar};
@@ -83,7 +83,7 @@ const tokenCheck = (token) => {
                 }
                 
             } catch {
-                resolve(new ErrorModel("解析 token 失败"))
+                resolve(new ErrorModel("Token Parsing failed"))
             }
         }
        

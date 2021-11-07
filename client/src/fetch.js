@@ -5,6 +5,7 @@ import axios from 'axios';
 import { getItem } from './localStorage';
 
 const ROOT = "http://localhost:8080";
+
 export const root = ROOT + "/api";
 export const avatarRoot = ROOT + "/avatar"
 const fetch = (method, path, data) => {

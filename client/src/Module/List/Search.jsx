@@ -75,7 +75,7 @@ function Search(props) {
                                 <div className="username">{username}</div>
                                 <div id="add-friend" onClick={handleAddUser}>+</div>
                             </ResWrapper>
-                        ) : <div className="no-user">找不到此用户</div>
+                        ) : <div className="no-user">The user could not be found</div>
                     }
                 </ResBoxWrapper> : null
             }

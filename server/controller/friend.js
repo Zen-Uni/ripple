@@ -19,7 +19,7 @@ const handleSearchUser = (email) => {
         }).exec();
 
         if (res == null) {
-            resolve(new ErrorModel("该用户不存在"));
+            resolve(new ErrorModel("The user does not exist"));
         } else {
             resolve(new SuccessfulModel(res, "查询成功"))
         }
@@ -50,13 +50,13 @@ const handleFriendReq = (to, token) => {
                 }).exec();
 
                 console.log(sid);
-                resolve(new SuccessfulModel({sid}, "好友请求已发送"));
+                resolve(new SuccessfulModel({sid}, "A friend request has been sent"));
            } catch (err){
                 console.log(err);
-                resolve(new ErrorModel("好友请求发送失败"));
+                resolve(new ErrorModel("Failed to send a friend request"));
            }
         } else {
-            resolve(new ErrorModel("对方已是好友"));
+            resolve(new ErrorModel("The other is already a good friend"));
         }
     })
 }
@@ -152,10 +152,10 @@ const handleMakeFriend = (token, femail) => {
                 status: 2
             });
             await tip.save();
-            resolve(new SuccessfulModel("好友添加成功"));
+            resolve(new SuccessfulModel("Friend Added successfully"));
        } catch (err) {
            console.log(err);
-           resolve(new ErrorModel("好友添加失败"));
+           resolve(new ErrorModel("Failed to add friends"));
        }
 
     })
