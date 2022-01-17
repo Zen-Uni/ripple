@@ -4,9 +4,15 @@
  * @since 1.0
  */
 
-import { Test1, Test2, Test3 } from "./components";
-import Layout from "./pages/Layout";
-import Login from "./pages/Login";
+import Layout from "./components/Layout"
+import { Chat, ChatList } from "./pages/Chat"
+import Login from "./pages/Login"
+
+import Relation from "./pages/Relation"
+import Setting from "./pages/Setting"
+import User from "./pages/User"
+import Modify from './pages/Modify'
+import { Social, Moment, Ripple } from './pages/Social'
 
 
 const routes = [
@@ -19,20 +25,43 @@ const routes = [
         element: <Layout/>,
         children: [
             {
-                path: 'test1',
-                element: <Test1/>,
-                children: [
-                    {
-                        path: 'test3',
-                        element: <Test3/>
-                    }
-                ]
+                index: true,
+                element: <ChatList/>
             },
             {
-                path: 'test2',
-                element: <Test2/>
+                path: 'relation',
+                element: <Relation/>
+            },
+            {
+                path: 'social',
+                element: <Social/>
+            },
+            {
+                path: 'setting',
+                element: <Setting/>
             }
         ]
+    },
+    {
+        // 聊天窗口
+        path: '/chat',
+        element: <Chat/>
+    },
+    {
+        path: '/user',
+        element: <User/>
+    },
+    {
+        path: '/modify',
+        element: <Modify/>
+    },
+    {
+        path: '/moment',
+        element: <Moment/>
+    },
+    {
+        path: '/ripple',
+        element: <Ripple/>
     }
 ]
 
