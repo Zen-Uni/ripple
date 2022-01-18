@@ -10,14 +10,17 @@ import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 
 export default function NavBar() {
-	const [value, setValue] = useState("chat");
+	const [value, setValue] = useState("");
 
-    const navigate = useNavigate();
+	const navigate = useNavigate();
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
-        navigate('/'+newValue);
 	};
+
+	useEffect(() => {
+		navigate("/" + value);
+	}, [value, navigate]);
 
 	return (
 		<BottomNavigation
