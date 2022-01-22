@@ -1,28 +1,33 @@
 const Koa = require('koa')
 const app = new Koa()
-const views = require('koa-views')
+const error = require('koa-json-error')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-
-const index = require('./routes/index')
-const users = require('./routes/users')
+const parameter = require('koa-parameter')
+const routing = require('./routes')
+// const users = require('./routes/users')
 
 // error handler
 onerror(app)
-
+app.use(error({
+  postFormat: (err, {
+    stack,
+    ...rest
+  }) => process.env.NODE_ENV === 'production' ? rest : { stack, ...rest }
+}))
 // middlewares
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
 }))
+
+app.use(parameter(app))
+
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
 
-app.use(views(__dirname + '/views', {
-  extension: 'pug'
-}))
 
 // logger
 app.use(async (ctx, next) => {
@@ -33,8 +38,8 @@ app.use(async (ctx, next) => {
 })
 
 // routes
-app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
+// app.use(users.routes(), users.allowedMethods())
+routing(app)
 
 // error-handling
 app.on('error', (err, ctx) => {
