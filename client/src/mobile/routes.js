@@ -6,23 +6,28 @@
 
 import Layout from "./components/Layout"
 import { Chat, ChatList } from "./pages/Chat"
-import Login from "./pages/Login"
+import LoginAndRegister from "./pages/Login"
 
 import Relation from "./pages/Relation"
 import Setting from "./pages/Setting"
 import User from "./pages/User"
 import Modify from './pages/Modify'
 import { Social, Moment, Ripple } from './pages/Social'
+import { AuthRequireWrapper } from "./hooks/useAuth"
 
 
 const routes = [
     {
         path: '/login',
-        element: <Login/>
+        element: <LoginAndRegister/>
     },
     {
         path: '/',
-        element: <Layout/>,
+        element: (
+            <AuthRequireWrapper>
+                <Layout/>
+            </AuthRequireWrapper>
+        ),
         children: [
             {
                 index: true,

@@ -4,8 +4,36 @@
  * @since 1.0
  */
 
-export default function Login() {
+import { useState } from "react"
+import Register from "./Register"
+import Login from "./Login"
+import { LoginAndRegisterWrapper } from "./style"
+import { CSSTransition } from 'react-transition-group'
+
+
+export default function LoginAndRgiester() {
+
+    const [logStatus, setLogStatus] = useState(true)
+    // const [animation, setAnimation] = useState(true)
+
     return (
-        <div>this is login page</div>
+        <LoginAndRegisterWrapper>
+            <CSSTransition
+                in={logStatus}
+                timeout={300}
+                classNames="login"
+                unmountOnExit
+            >
+                <Login setLogStatus={setLogStatus}/>
+            </CSSTransition>
+            <CSSTransition
+                in={!logStatus}
+                timeout={300}
+                classNames="register"
+                unmountOnExit
+            >
+                <Register setLogStatus={setLogStatus}/>
+            </CSSTransition>
+        </LoginAndRegisterWrapper>
     )
 }

@@ -5,15 +5,18 @@
 
 import { Routes } from 'react-router-dom'
 import renderRoutes from '../utils/route-config'
+import { AuthProvider } from './hooks/useAuth'
 import routes from './routes'
 
 
 export default function Mobile() {
     return (
-        <Routes>
-            {
-               renderRoutes(routes)
-            }
-        </Routes>
+        <AuthProvider>
+            <Routes>
+                {
+                    renderRoutes(routes)
+                }
+            </Routes>
+        </AuthProvider>
     )
 }
