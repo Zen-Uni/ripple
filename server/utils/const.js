@@ -1,0 +1,16 @@
+/**
+ * @description 返回CODE的枚举
+ * @author Airbo
+ * @since 1.0
+ */
+module.exports = {
+    // MoudleName_Status_Detail
+    SUCCESS: 0,
+    USERCAPTCHA_SENDFAIL_CAUGHT:700,
+    USERCAPTCHA_STOP_SNEDTOFAST:701,
+    USERCAPTCHA_STOP_NOCAPTCHA:702,
+    USERREGISTER_FAIL_CAUGHT:710,
+    USERREGISTER_FAIL_CAPTCHAWRONG:711,
+    ERROR_OTHER: 100,
+    PARAMTER_ERROR_NOTEMAIL:101
+}

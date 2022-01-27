@@ -4,17 +4,22 @@
  * @since 1.0
  */
 
-const router = require('koa-router')()
-const { index, bar, handleError, handleParameter } = require('../controllers/users')
+const router = require("koa-router")();
+const {
+  index,
+  login,
+  register,
+  captcha,
+  auth,
+} = require("../controllers/users");
 
+router.prefix("/users");
 
-router.prefix('/users')
+router.get("/", index);
+router.get('/auth',auth)
 
-router.get('/', index)
-router.get('/:id', handleError)
-router.get('/bar', bar)
+router.post("/login", login);
+router.post("/register", register);
+router.post("/captcha", captcha);
 
-router.post('/param', handleParameter)
-
-
-module.exports = router
+module.exports = router;
