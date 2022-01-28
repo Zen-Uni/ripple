@@ -42,6 +42,16 @@ let checkCaptcha = (email) =>
     });
   });
 
+let findAccount = (email) =>
+  new Promise((resolve, reject) => {
+    User.find({ email: email }, (err, doc) => {
+      if (err) reject(err);
+      else {
+        resolve(doc.pop());
+      }
+    });
+  });
+
 class UsersCtl {
   index(ctx, next) {
     ctx.body = "这是 users 的根路由";
@@ -54,7 +64,7 @@ class UsersCtl {
    */
   //TODO 统一verifyParams校验数据格式不正确后返回的信息
 
-  auth(ctx, next) {
+  auth(ctx) {
     ctx.header.verifyParams({
       email: {
         authorization: "string",
@@ -76,7 +86,7 @@ class UsersCtl {
     }
   }
 
-  login(ctx, next) {
+  async login(ctx) {
     ctx.verifyParams({
       email: {
         type: "string",
@@ -87,19 +97,31 @@ class UsersCtl {
         require: true,
       },
     });
-
     let { email, password } = ctx.request.body;
     let resCont;
     const debug = createDebug("user:login");
-
     try {
       if (mailreg(email)) {
+        let doc = await findAccount(email);
+        if (doc && (await psdMd5(password)) == doc.password) {
+          resCont = {
+            msg: "登录成功",
+            data: "Bear " + jwt(email),
+            code: CODE.SUCCESS,
+          };
+        }
+        else{
+          resCont = {
+            msg: "账号不存在或密码错误",
+            code: CODE.USERLOGIN_FAUL_WRONGINFO,
+          };
+        }
       } else {
         debug(`inputEmail: ${email} is not a email adress`);
-        return (resCont = {
+        resCont = {
           msg: "错误的邮箱地址",
           code: CODE.PARAMTER_ERROR_NOTEMAIL,
-        });
+        };
       }
     } catch (err) {
       resCont = {
@@ -114,7 +136,7 @@ class UsersCtl {
     }
   }
 
-  async register(ctx, next) {
+  async register(ctx) {
     ctx.verifyParams({
       email: {
         type: "string",
@@ -148,7 +170,7 @@ class UsersCtl {
           });
         }
         if (captcha == doc.captcha) {
-          let md5PSD = psdMd5(password);
+          let md5PSD = await psdMd5(password);
           await registe(email, md5PSD, username, captcha)
             .then((res) => {
               if (res == 1) {
@@ -194,7 +216,7 @@ class UsersCtl {
     }
   }
 
-  async captcha(ctx, next) {
+  async captcha(ctx) {
     ctx.verifyParams({
       email: {
         type: "string",

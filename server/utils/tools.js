@@ -15,9 +15,12 @@ const mailreg = (email) => {
   return reg.test(email);
 };
 
-const psdMd5 = (password) => {
-  crypto.createHash("md5").update(password).digest("hex");
-};
+const psdMd5 = (password) =>
+  new Promise((res, rej) => {
+    res(crypto.createHash("md5").update(password).digest("hex"));
+  }).catch((e) => {
+    rej(e);
+  });
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
