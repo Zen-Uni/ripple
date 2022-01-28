@@ -4,15 +4,17 @@
  * @since 1.0
  */
 
-const transporter = require("../utils/mailer");
-const creatCaptcha = require("../utils/captcha");
+const {
+  mailreg,
+  jwt,
+  creatCaptcha,
+  psdMd5,
+  transporter,
+} = require("../utils/tools");
 const CODE = require("../utils/const");
-const mailreg = require("../utils/mailreg");
 const createDebug = require("debug");
 const User = require("../models/User");
 const Cache = require("../models/Cache");
-const jwt = require("../utils/jwt");
-const crypto = require("crypto");
 
 let registe = (email, password, username) =>
   new Promise((resolve, reject) => {
@@ -85,19 +87,30 @@ class UsersCtl {
         require: true,
       },
     });
-    if (1) {
-      ctx.status = 200;
-      ctx.body = {
-        msg: "登录成功",
-        data: "<token>",
-        code: "<User>",
-      };
-    } else {
-      ctx.status = 200;
-      ctx.body = {
+
+    let { email, password } = ctx.request.body;
+    let resCont;
+    const debug = createDebug("user:login");
+
+    try {
+      if (mailreg(email)) {
+      } else {
+        debug(`inputEmail: ${email} is not a email adress`);
+        return (resCont = {
+          msg: "错误的邮箱地址",
+          code: CODE.PARAMTER_ERROR_NOTEMAIL,
+        });
+      }
+    } catch (err) {
+      resCont = {
         msg: "登录失败",
-        code: "<User>",
+        code: CODE.USERLOGIN_FAUL_CAUGHT,
       };
+      debug(`Caught err: ${err}`);
+    } finally {
+      ctx.status = 200;
+      ctx.body = resCont;
+      debug(`resCont: ${JSON.stringify(resCont)}`);
     }
   }
 
@@ -135,17 +148,13 @@ class UsersCtl {
           });
         }
         if (captcha == doc.captcha) {
-          const psdMd5 = crypto
-            .createHash("md5")
-            .update(password)
-            .digest("hex");
-            console.log(psdMd5)
-          await registe(email, psdMd5, username, captcha)
+          let md5PSD = psdMd5(password);
+          await registe(email, md5PSD, username, captcha)
             .then((res) => {
               if (res == 1) {
                 resCont = {
                   msg: "注册成功",
-                  data: "Bear "+jwt(email),
+                  data: "Bear " + jwt(email),
                   code: CODE.SUCCESS,
                 };
               }
@@ -172,7 +181,6 @@ class UsersCtl {
         };
         debug(`inputEmail: ${email} is not a email adress`);
       }
-      console.log("try", resCont);
     } catch (err) {
       resCont = {
         msg: "注册失败",
@@ -182,7 +190,6 @@ class UsersCtl {
     } finally {
       ctx.status = 200;
       ctx.body = resCont;
-      console.log("final", resCont);
       debug(`resCont: ${JSON.stringify(resCont)}`);
     }
   }
@@ -200,23 +207,24 @@ class UsersCtl {
     const debug = createDebug("user:captcha");
 
     try {
-      let doc = await checkCaptcha(email);
-      if (doc && new Date() - doc.createdAt < 1000 * 60) {
-        resCont = {
-          msg: "请勿多次请求验证码",
-          code: CODE.USERCAPTCHA_STOP_SNEDTOFAST,
-        };
-        debug(`adventure: ${JSON.stringify(doc)}`);
-      } else {
-        let captcha = creatCaptcha();
-        new Cache({
-          email: email,
-          captcha: captcha,
-          createdAt: new Date(),
-        }).save((err) => {
-          if (err) return console.error(err);
-        });
-        if (mailreg(email)) {
+      if (mailreg(email)) {
+        let doc = await checkCaptcha(email);
+        if (doc && new Date() - doc.createdAt < 1000 * 60) {
+          resCont = {
+            msg: "请勿多次请求验证码",
+            code: CODE.USERCAPTCHA_STOP_SNEDTOFAST,
+          };
+          debug(`adventure: ${JSON.stringify(doc)}`);
+        } else {
+          let captcha = creatCaptcha();
+          new Cache({
+            email: email,
+            captcha: captcha,
+            createdAt: new Date(),
+          }).save((err) => {
+            if (err) return console.error(err);
+          });
+
           let mailCofig = {
             from: '"AirboZH" <airbozh@qq.com>', // sender address
             to: email, // list of receivers
@@ -229,13 +237,13 @@ class UsersCtl {
             code: CODE.SUCCESS,
           };
           debug(`mailCofig: ${JSON.stringify(mailCofig)}`);
-        } else {
-          resCont = {
-            msg: "错误的邮箱地址",
-            code: CODE.PARAMTER_ERROR_NOTEMAIL,
-          };
-          debug(`inputEmail: ${email} is not a email adress`);
         }
+      } else {
+        resCont = {
+          msg: "错误的邮箱地址",
+          code: CODE.PARAMTER_ERROR_NOTEMAIL,
+        };
+        debug(`inputEmail: ${email} is not a email adress`);
       }
     } catch (err) {
       resCont = {
