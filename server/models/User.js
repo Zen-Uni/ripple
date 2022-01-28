@@ -4,20 +4,20 @@
  * @since 1.0
  */
 
-var { mongoose, db, Schema } = require("./index");
+var { mongoose, Schema } = require("./index");
 
 var userSchema = new Schema({
   email: {
     type: String,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
-    unique: true
+    unique: true,
   },
   username: {
     type: String,
-    unique: true
+    unique: true,
   },
   createDate: Date,
   avatarUrl: String,

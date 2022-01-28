@@ -4,7 +4,7 @@
  * @since 1.0
  */
 
-var { mongoose, db, Schema } = require("./index");
+var { mongoose, Schema } = require("./index");
 
 var cacheSchema = new Schema({
   email: {
@@ -17,7 +17,7 @@ var cacheSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    index: { expires: 300},
+    index: { expires: 300 },
   },
 });
 

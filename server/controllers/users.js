@@ -11,6 +11,7 @@ const {
   psdMd5,
   transporter,
 } = require("../utils/tools");
+const jsonwebtoken = require("jsonwebtoken");
 const CODE = require("../utils/const");
 const createDebug = require("debug");
 const User = require("../models/User");
@@ -65,24 +66,23 @@ class UsersCtl {
   //TODO 统一verifyParams校验数据格式不正确后返回的信息
 
   auth(ctx) {
-    ctx.header.verifyParams({
-      email: {
-        authorization: "string",
-        require: true,
-      },
-    });
-    if (1) {
+    let authorization = ctx.request.header.authorization.split(" ")[1];
+    const debug = createDebug("user:auth");
+    try {
+      let decoded  = jsonwebtoken.verify(authorization, "Ripple")
       ctx.status = 200;
       ctx.body = {
         msg: "token 验证成功",
-        code: "<Auth>",
+        code: CODE.SUCCESS,
       };
-    } else {
+      debug(decoded)
+    } catch (e) {
       ctx.status = 401;
       ctx.body = {
         msg: "token 验证失败",
-        code: "<Auth>",
+        code: CODE.USERAUTH_FAIL_WRONGTOKEN,
       };
+      debug(e)
     }
   }
 
@@ -109,8 +109,7 @@ class UsersCtl {
             data: "Bear " + jwt(email),
             code: CODE.SUCCESS,
           };
-        }
-        else{
+        } else {
           resCont = {
             msg: "账号不存在或密码错误",
             code: CODE.USERLOGIN_FAUL_WRONGINFO,
