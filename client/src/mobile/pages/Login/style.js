@@ -18,7 +18,6 @@ export const LoginAndRegisterWrapper = styled.div`
     position: absolute;
     height: 100vh;
     width: 100vw;
-
     & .login-enter {
         opacity: 0;
         transform: scale(0.9);

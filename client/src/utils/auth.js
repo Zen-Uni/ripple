@@ -18,6 +18,10 @@ const auth = {
 
         // simulate: 模拟接口请求，异步
         setTimeout(callback, 100)
+    },
+
+    getAuth() {
+        return this.isAuthenticated
     }
 }
 

@@ -5,16 +5,14 @@
  */
 
 const router = require('koa-router')()
-const { index, bar, handleError, handleParameter } = require('../controllers/users')
-
+const { getCaptcha } = require('../controllers/tips')
+const { create, delete: del } = require('../controllers/users')
 
 router.prefix('/users')
 
-router.get('/', index)
-router.get('/:id', handleError)
-router.get('/bar', bar)
-
-router.post('/param', handleParameter)
+router.get('/captcha', getCaptcha)
+router.post('/register', create)
+router.delete('/delete', del)    // TODO: 删除鉴权优化
 
 
 module.exports = router

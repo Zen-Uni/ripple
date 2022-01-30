@@ -5,14 +5,19 @@
  */
 
 import { Outlet } from "react-router";
+import { Wrapper } from ".";
 import NavBar from "./NavBar";
+import Tittle from './Tittle'
 
 export default function Layout() {
+    // TODO: 发布订阅实现数据传递
     return (
         <>
-            <div>this is Layout component</div>
+            <Wrapper>
+                <Tittle/>
+                <Outlet/>
+            </Wrapper>
             <NavBar/>
-            <Outlet/>
         </>
     )
 }

@@ -14,6 +14,7 @@ import User from "./pages/User"
 import Modify from './pages/Modify'
 import { Social, Moment, Ripple } from './pages/Social'
 import { AuthRequireWrapper } from "./hooks/useAuth"
+// import Skelet from "./components/Skeleton"
 
 
 const routes = [

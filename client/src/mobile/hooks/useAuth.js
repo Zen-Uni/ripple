@@ -31,8 +31,9 @@ export const AuthProvider = ({ children }) => {
         })
     }
 
+    const authStatus = () => auth.getAuth()
 
-    const value = { user, signin, signout }
+    const value = { user, signin, signout, authStatus }
     return (
         <AuthContext.Provider value={value}>{ children }</AuthContext.Provider>
     )
@@ -40,10 +41,10 @@ export const AuthProvider = ({ children }) => {
 
 // require auth component wrapper
 export const AuthRequireWrapper = ({ children }) => {
-    const { user } = useContext(AuthContext)
+    const { authStatus } = useContext(AuthContext)
 
 
-    if (!user) {
+    if (!authStatus()) {
         return <Navigate to='/login' replace/>
     }
 
