@@ -3,12 +3,12 @@ const app = new Koa()
 const error = require('koa-json-error')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
-const bodyparser = require('koa-bodyparser')
+const koaBody = require('koa-body')
 const logger = require('koa-logger')
 const parameter = require('koa-parameter')
 const routing = require('./routes')
 // const users = require('./routes/users')
-
+const path = require('path')
 // error handler
 onerror(app)
 app.use(error({
@@ -18,8 +18,12 @@ app.use(error({
   }) => process.env.NODE_ENV === 'production' ? rest : { stack, ...rest }
 }))
 // middlewares
-app.use(bodyparser({
-  enableTypes:['json', 'form', 'text']
+app.use(koaBody({
+  multipart: true,
+  formidable: {
+    uploadDir: path.join(__dirname, '/public/uploads'),
+    keepExtensions: true  
+  }
 }))
 
 app.use(parameter(app))

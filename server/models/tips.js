@@ -13,7 +13,7 @@ const TipSchema = new Schema({
         select: false
     },
     type_id: {
-        type: Number,      // TODO:  0: 邮箱验证码, 
+        type: Number,      // TODO:  0: 邮箱验证码, 1: 好友请求
         select: false
     },
     status: {
@@ -28,6 +28,18 @@ const TipSchema = new Schema({
     captcha: {
         type: String,
         select: false
+    },
+    remark_msg: {    // 好友请求备注信息
+        type: String,
+        select: false 
+    },
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    request_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, { timestamps: true })
 

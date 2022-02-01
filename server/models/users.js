@@ -9,11 +9,12 @@ const { Schema, model } = require('./db')
 
 const userSchema = new Schema({
     __v: {
+        type: Number,
         select: false
     },
     email: { 
         type: String, 
-        required: true 
+        required: true
     },
     username: {
         type: String,
@@ -25,7 +26,8 @@ const userSchema = new Schema({
         select: false
     },
     avatar_url: {
-        type: String
+        type: String,
+        select: false
     },
     headline: {
         type: String,
