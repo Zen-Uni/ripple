@@ -10,6 +10,11 @@ const TIP_CODE = {
     group: 2
 }
 
+const STATUS_CODE = {
+    agree: 1,
+    disagree: 2
+}
+
 class BasicModel {
     constructor(data, msg) {
         if (typeof data === 'string') {
@@ -63,6 +68,10 @@ const Errorno = {
     search_user: {
         code: 10005,
         msg: "没有该用户"
+    },
+    post_moment_fail: {
+        code: 10006,
+        msg: "不能发布空动态"
     }
 }
 
@@ -71,7 +80,14 @@ const Successno = {
     register_success: "注册成功",
     login_success: "登录成功",
     create_img_url: "图像地址分发成功",
-    user_modify_success: "个人信息修改成功"
+    user_modify_success: "个人信息修改成功",
+    user_request_success: "好友请求发送成功",
+    user_response_agree: "好友添加成功",
+    user_response_disagress: "已拒绝",
+    post_moment_success: "动态发布成功",
+    list_moment_success: "获取动态列表成功",
+    like_moment_success: "点赞成功",
+    dislike_moment_success: "取消点赞成功"
 }
 
 module.exports = {
@@ -79,5 +95,6 @@ module.exports = {
     ErrorModel,
     Errorno,
     Successno,
-    TIP_CODE
+    TIP_CODE,
+    STATUS_CODE
 }

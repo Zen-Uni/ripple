@@ -9,6 +9,7 @@
  const User = require("../models/users")
  const { createToken } = require("../utils/token")
  const path = require('path')
+
 class UsersCtl {
     // TODO: verify 抽象优化
     async create(ctx, next) {
@@ -139,10 +140,6 @@ class UsersCtl {
     async request(ctx, next) {
         // TODO: 校验优化
         ctx.verifyParams({
-            id: {
-                type: 'string',
-                required: true
-            },
             remark_msg: {
                 type: 'string',
                 required: false
@@ -152,15 +149,31 @@ class UsersCtl {
                 required: true
             }
         })
-
-        // TODO: 同一请求更新处理
-        ctx.request.body.user_id = ctx.params.id
-        const relation = await new Tip({
-            // TODO：消息码优化
-            type_id: TIP_CODE.user,
-            ...ctx.request.body
-        }).save()
-        ctx.body = new SuccessModel(relation, "好友请求发送成功")
+        ctx.request.body.user_id = ctx.state.user.id
+        const { user_id, request_id } = ctx.request.body
+        const conditional = {
+            user_id,
+            request_id,
+            type_id: TIP_CODE.user
+        }
+        // TODO: 错误异常优化
+        const exist = await Tip.findOne()
+        if (!exist) {
+            const relation = await new Tip({
+                type_id: TIP_CODE.user,
+                ...ctx.request.body
+            }).save()
+            ctx.body = new SuccessModel(relation, Successno.user_request_success)
+        } else {
+            const relation = await Tip.findOneAndUpdate(conditional, {
+                ...ctx.request.body
+            })
+            ctx.body = new SuccessModel({
+                ...relation,
+                ...ctx.request.body
+            }, Successno.user_request_success)
+        }
+        
     }
 
     async response(ctx, next) {
@@ -173,10 +186,43 @@ class UsersCtl {
             type_id: {
                 type: 'number',
                 required: true
+            },
+            status: {
+                type: 'number',
+                required: true
             }
         })
 
-        // TODO: 2.2
+        ctx.request.body.request_id = ctx.state.user.id
+        const { request_id, user_id, type_id, status } = ctx.request.body
+        // TODO: 复杂逻辑优化
+        await Tip.findOneAndUpdate({
+            request_id, 
+            user_id,
+            type_id
+        }, {
+            status
+        })
+
+        if (status === 1) {
+            const me = await User.findById(ctx.state.user.id).select('+friends')
+            if (!me.friends.map(id => id.toString()).includes(user_id)) {
+                me.friends.push(user_id)
+                me.save()
+            }
+            const user = await User.findById(user_id).select('+friends')
+            if (!user.friends.map(id => id.toString()).includes(ctx.state.user.id)) {
+                user.friends.push(ctx.state.user.id)
+                user.save()
+            }
+            ctx.body = new SuccessModel({
+                user_id
+            }, Successno.user_response_agree)
+            return
+        }
+        ctx.body = new SuccessModel({
+            user_id
+        }, Successno.user_response_disagress)
     }
 
     handleError(ctx, next) {
@@ -188,7 +234,7 @@ class UsersCtl {
 
     // 辅助接口对应的控制器
     async retrieve(ctx, next) {
-        ctx.body = await User.find()
+        ctx.body = await User.find().select("+friends +moments")
     }
 
     async delete(ctx, next) {

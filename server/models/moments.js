@@ -16,7 +16,8 @@ const MomentSchema = new Schema({
             {
                 type: String
             }
-        ]
+        ],
+        required: false
     },
     user_id: {
         type: Schema.Types.ObjectId,
