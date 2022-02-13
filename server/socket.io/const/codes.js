@@ -1,0 +1,10 @@
+const CODES_SOCKET_IO = {
+    SUCCESS: 0,
+    ERROR_OTHER: 100,
+    AUTH_UNAUTHORIZED: 401,
+    AUTH_FORBIDDEN: 403,
+}
+
+module.exports = {
+    CODES_SOCKET_IO,
+}
