@@ -25,6 +25,16 @@
 	line-height: 3rem;
 }
 
-.MuiCollapse-wrapper {
+.user-item-btn {
+    box-sizing: border-box;
+    border-radius: 5px;
     background: #fafafa;
+    text-align: center;
+    padding: 6px 12px;
+}
+
+.user-item-btn-group {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
 }
