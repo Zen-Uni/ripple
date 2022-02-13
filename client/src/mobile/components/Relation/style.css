@@ -26,15 +26,25 @@
 }
 
 .user-item-btn {
-    box-sizing: border-box;
-    border-radius: 5px;
-    background: #fafafa;
-    text-align: center;
-    padding: 6px 12px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	background: #fafafa;
+	text-align: center;
+	padding: 6px 12px;
+}
+
+.user-item-btn.warning {
+	background: #ee827c21;
+	color: #ee827c;
+}
+
+.user-item-btn.success {
+	color: RGB(0, 110, 95);
+	background-color: RGBA(0, 110, 95, 0.2);
 }
 
 .user-item-btn-group {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
 }

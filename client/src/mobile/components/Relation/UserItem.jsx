@@ -39,7 +39,7 @@ export default function UserItem(props) {
                     <UserItemBtn title="朋友圈" size={4}/>
                     <UserItemBtn title="聊天" size={4}/>
                     <UserItemBtn title="备注" size={4}/>
-                    <UserItemBtn title="删除" size={4}/>
+                    <UserItemBtn title="删除" size={4} type="warning"/>
                 </div>
 			</AccordionDetails>
 		</Accordion>
