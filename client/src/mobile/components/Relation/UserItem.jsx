@@ -8,8 +8,6 @@ import UserItemBtn from "./UserItemBtn";
 import "./style.css";
 
 export default function UserItem(props) {
-	const [name, setName] = useState(props.name);
-	const [avatar, setAvatar] = useState(props.avatar);
 	const [expanded, setExpanded] = useState(false);
 
 	return (
@@ -23,8 +21,8 @@ export default function UserItem(props) {
 			>
 				<div className="user-item">
 					<Avatar
-						alt={name}
-						src={avatar}
+						alt={props.name}
+						src={props.avatar}
 						sx={{ width: "3rem", height: "3rem" }}
 					/>
 					<Typography
@@ -32,7 +30,7 @@ export default function UserItem(props) {
 						component="div"
 						sx={{ lineHeight: "3rem" }}
 					>
-						{name}
+						{props.name}
 					</Typography>
 				</div>
 			</AccordionSummary>
