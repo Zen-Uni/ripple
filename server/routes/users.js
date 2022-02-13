@@ -5,16 +5,20 @@
  */
 
 const router = require('koa-router')()
-const { index, bar, handleError, handleParameter } = require('../controllers/users')
+const {
+    handlePostUserRegister,
+    handlePostUserLogin,
+    handlePutUserName,
+    handlePutPassword,
+    handlePutMemo,
+} = require('../controllers/users')
 
+router.prefix('/api/users')
 
-router.prefix('/users')
-
-router.get('/', index)
-router.get('/:id', handleError)
-router.get('/bar', bar)
-
-router.post('/param', handleParameter)
-
+router.post('/', handlePostUserRegister)
+router.post('/login', handlePostUserLogin)
+router.put('/userName', handlePutUserName) // TODO 要考虑B端
+router.put('/password', handlePutPassword)
+router.put('/memo', handlePutMemo)
 
 module.exports = router

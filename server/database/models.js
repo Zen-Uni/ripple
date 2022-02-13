@@ -79,6 +79,13 @@ const groupMessageRecordSchema = new Schema({
     since: { type: ObjectId, ref: 'GroupMessage' },
 })
 
+const captchaSchema = new Schema({
+    value: String,
+    description: String,
+    email: String,
+    createdAt: { type: Date, expires: 600 },
+})
+
 module.exports = {
     User: model('User', userSchema, 'users'),
     Group: model('Group', groupSchema, 'groups'),
@@ -91,4 +98,5 @@ module.exports = {
         groupMessageRecordSchema,
         'group_message_records',
     ),
+    Captcha: model('Captcha', captchaSchema, 'captchas'),
 }

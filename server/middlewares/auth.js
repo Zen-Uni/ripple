@@ -8,11 +8,16 @@ const { verify, gainJwtSub } = require('../utils/jwt')
 const { User } = require('../database/models')
 
 const urlWhiteList = [
+    '/captchas',
+    '/users',
+    '/users/login',
+
     '/test/newUser',
     '/test/newUserToken/:userId',
     '/test/newGroup',
     '/test/becomeNewMember',
 ].map((v) => '/api' + v)
+// TODO 添加对请求方法的判断
 
 const checkUrlWhiteList = (url) => {
     for (const allowableUrl of urlWhiteList) {

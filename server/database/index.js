@@ -1,6 +1,7 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://ripple-mongodb/ripple').then(() => {
+mongoose.connect(process.env.DB_URI).then(() => {
     console.log('Ripple-backend已连接MongoDB...')
 })
 mongoose.connection.on('error', (e) => {

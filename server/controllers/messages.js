@@ -12,7 +12,7 @@ const {
     GroupMessage,
     GroupMessageRecord,
 } = require('../database/models')
-const { CODE_MESSAGES } = require('../const/codes')
+const { CODES_MESSAGES } = require('../const/codes')
 const {
     Types: { ObjectId },
 } = require('../database')
@@ -80,7 +80,7 @@ class UserMessagesCtl {
             .project('-_id -__v -receiver -since -messages.__v')
             .exec()
         ctx.body = {
-            code: CODE_MESSAGES.SUCCESS,
+            code: CODES_MESSAGES.SUCCESS,
             msg: '获取最近消息成功',
             data: {
                 userMessages,
@@ -115,7 +115,7 @@ class UserMessagesCtl {
             .limit(pageSize)
             .exec()
         ctx.body = {
-            code: CODE_MESSAGES.SUCCESS,
+            code: CODES_MESSAGES.SUCCESS,
             mas: '查询单聊消息成功',
             data: messages,
         }
@@ -131,7 +131,7 @@ class UserMessagesCtl {
         if ((await User.findById(sub).exec()) === null) {
             ctx.status = 412
             ctx.body = {
-                code: CODE_MESSAGES.ERROR_RECEIVER_NOT_EXIST,
+                code: CODES_MESSAGES.ERROR_RECEIVER_NOT_EXIST,
                 msg: '接收者不存在',
             }
             return
@@ -139,7 +139,7 @@ class UserMessagesCtl {
         if (content === undefined || content === null || content === '') {
             ctx.status = 412
             ctx.body = {
-                code: CODE_MESSAGES.ERROR_CONTENT_LACK,
+                code: CODES_MESSAGES.ERROR_CONTENT_LACK,
                 msg: '消息内容不能为空',
             }
             return
@@ -157,7 +157,7 @@ class UserMessagesCtl {
         delete msg.__v
         distributeUserMessage(userId, msg)
         ctx.body = {
-            code: CODE_MESSAGES.SUCCESS,
+            code: CODES_MESSAGES.SUCCESS,
             mas: '单聊消息发送成功',
         }
     }
@@ -174,7 +174,7 @@ class UserMessagesCtl {
         if (targetMessage === null) {
             ctx.status = 412
             ctx.body = {
-                code: CODE_MESSAGES.ERROR_MESSAGE_NOT_EXIST,
+                code: CODES_MESSAGES.ERROR_MESSAGE_NOT_EXIST,
                 msg: '单聊消息不存在',
             }
             return
@@ -184,7 +184,7 @@ class UserMessagesCtl {
                 if (targetMessage.receiver.toString() !== sub) {
                     ctx.status = 412
                     ctx.body = {
-                        code: CODE_MESSAGES.ERROR_RECEIVER_WRONG,
+                        code: CODES_MESSAGES.ERROR_RECEIVER_WRONG,
                         msg: '该用户不是消息的接收者',
                     }
                     return
@@ -206,7 +206,7 @@ class UserMessagesCtl {
                         userMessageIds,
                     )
                     ctx.body = {
-                        code: CODE_MESSAGES.SUCCESS,
+                        code: CODES_MESSAGES.SUCCESS,
                         msg: `已将${modifiedCount}条消息标记为已读`,
                     }
                     return
@@ -216,7 +216,7 @@ class UserMessagesCtl {
                     targetMessage._id,
                 ])
                 ctx.body = {
-                    code: CODE_MESSAGES.SUCCESS,
+                    code: CODES_MESSAGES.SUCCESS,
                     msg: '已将消息标记为已读',
                 }
                 return
@@ -225,7 +225,7 @@ class UserMessagesCtl {
                 if (targetMessage.sender.toString() !== sub) {
                     ctx.status = 412
                     ctx.body = {
-                        code: CODE_MESSAGES.ERROR_SENDER_WRONG,
+                        code: CODES_MESSAGES.ERROR_SENDER_WRONG,
                         msg: '该用户不是消息的发送者',
                     }
                     return
@@ -235,14 +235,14 @@ class UserMessagesCtl {
                     targetMessage._id,
                 ])
                 ctx.body = {
-                    code: CODE_MESSAGES.SUCCESS,
+                    code: CODES_MESSAGES.SUCCESS,
                     msg: '已撤回消息',
                 }
                 return
             default:
                 ctx.status = 412
                 ctx.body = {
-                    code: CODE_MESSAGES.ERROR_STATUS_NOT_EXIST,
+                    code: CODES_MESSAGES.ERROR_STATUS_NOT_EXIST,
                     msg: `消息状态无法更新为${status}`,
                 }
                 return
@@ -263,7 +263,7 @@ class UserMessagesCtl {
         if (member === null || member.status !== 1) {
             ctx.status = 412
             ctx.body = {
-                code: CODE_MESSAGES.ERROR_NOT_GROUP_MEMBER,
+                code: CODES_MESSAGES.ERROR_NOT_GROUP_MEMBER,
                 msg: '该用户不是群成员',
             }
             return
@@ -277,7 +277,7 @@ class UserMessagesCtl {
             .limit(pageSize)
             .exec()
         ctx.body = {
-            code: CODE_MESSAGES.SUCCESS,
+            code: CODES_MESSAGES.SUCCESS,
             mas: '查询群聊消息成功',
             data: groupMessages,
         }
@@ -293,7 +293,7 @@ class UserMessagesCtl {
         if ((await Group.findById(groupId).exec()) === null) {
             ctx.status = 412
             ctx.body = {
-                code: CODE_MESSAGES.ERROR_GROUP_NOT_EXIST,
+                code: CODES_MESSAGES.ERROR_GROUP_NOT_EXIST,
                 msg: '群不存在',
             }
             return
@@ -301,7 +301,7 @@ class UserMessagesCtl {
         if (content === undefined || content === null || content === '') {
             ctx.status = 412
             ctx.body = {
-                code: CODE_MESSAGES.ERROR_CONTENT_LACK,
+                code: CODES_MESSAGES.ERROR_CONTENT_LACK,
                 msg: '消息内容不能为空',
             }
             return
@@ -319,7 +319,7 @@ class UserMessagesCtl {
         delete msg.__v
         distributeGroupMessage(groupId, msg) // TODO 失败时回滚
         ctx.body = {
-            code: CODE_MESSAGES.SUCCESS,
+            code: CODES_MESSAGES.SUCCESS,
             mas: '群聊消息发送成功',
         }
     }
@@ -336,7 +336,7 @@ class UserMessagesCtl {
         if (targetMessage === null) {
             ctx.status = 412
             ctx.body = {
-                code: CODE_MESSAGES.ERROR_MESSAGE_NOT_EXIST,
+                code: CODES_MESSAGES.ERROR_MESSAGE_NOT_EXIST,
                 msg: '群聊消息不存在',
             }
             return
@@ -360,7 +360,7 @@ class UserMessagesCtl {
                         groupMessageIds,
                     )
                     ctx.body = {
-                        code: CODE_MESSAGES.SUCCESS,
+                        code: CODES_MESSAGES.SUCCESS,
                         msg: `已将${modifiedCount}条消息标记为已读`,
                     }
                     return
@@ -371,7 +371,7 @@ class UserMessagesCtl {
                 ])
 
                 ctx.body = {
-                    code: CODE_MESSAGES.SUCCESS,
+                    code: CODES_MESSAGES.SUCCESS,
                     msg: '已将消息标记为已读',
                 }
                 return
@@ -382,14 +382,14 @@ class UserMessagesCtl {
                     targetMessage._id,
                 ])
                 ctx.body = {
-                    code: CODE_MESSAGES.SUCCESS,
+                    code: CODES_MESSAGES.SUCCESS,
                     msg: '已撤回消息',
                 }
                 return
             default:
                 ctx.status = 412
                 ctx.body = {
-                    code: CODE_MESSAGES.ERROR_STATUS_NOT_EXIST,
+                    code: CODES_MESSAGES.ERROR_STATUS_NOT_EXIST,
                     msg: `消息状态无法更新为${status}`,
                 }
                 return
