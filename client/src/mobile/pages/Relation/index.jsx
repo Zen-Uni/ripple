@@ -5,12 +5,13 @@
  */
 
 import { Link } from 'react-router-dom'
+import UserItem from '../../components/Relation/UserItem.jsx'
 
 export default function Relation() {
     return (
         <>
-            <div>this is Relationship Page</div>
-            <Link to="/chat">进入聊天窗口</Link>
+            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="jojo"></UserItem>
+            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="jojo"></UserItem>
         </>
     )
 }

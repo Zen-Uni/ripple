@@ -1,0 +1,30 @@
+.user-item-wrapper {
+	box-shadow: none !important;
+}
+
+.user-item-wrapper::before {
+	display: none;
+}
+
+.user-item-header {
+	padding: 0;
+}
+
+.user-item-header .MuiAccordionSummary-content,
+.user-item-header .MuiAccordionSummary-content.Mui-expanded {
+	margin: 0;
+}
+
+.user-item {
+	box-sizing: border-box;
+	padding: 0.75rem;
+	display: flex;
+	justify-content: space-between;
+	height: 4.5rem;
+	width: 100%;
+	line-height: 3rem;
+}
+
+.MuiCollapse-wrapper {
+    background: #fafafa;
+}
