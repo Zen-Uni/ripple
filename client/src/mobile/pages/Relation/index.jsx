@@ -4,14 +4,13 @@
  * @since 1.0
  */
 
-import { Link } from 'react-router-dom'
 import UserItem from '../../components/Relation/UserItem.jsx'
 
 export default function Relation() {
     return (
         <>
-            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="jojo"></UserItem>
-            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="jojo"></UserItem>
+            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="季悠然"></UserItem>
+            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="卢本伟"></UserItem>
         </>
     )
 }

@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import UserItemBtn from "./UserItemBtn";
 import "./style.css";
 
 export default function UserItem(props) {
@@ -36,10 +37,12 @@ export default function UserItem(props) {
 				</div>
 			</AccordionSummary>
 			<AccordionDetails>
-				<Typography>
-					Nulla facilisi. Phasellus sollicitudin nulla et quam mattis
-					feugiat. Aliquam eget maximus est, id dignissim quam.
-				</Typography>
+                <div className="user-item-btn-group">
+                    <UserItemBtn title="朋友圈" size={4}/>
+                    <UserItemBtn title="聊天" size={4}/>
+                    <UserItemBtn title="备注" size={4}/>
+                    <UserItemBtn title="删除" size={4}/>
+                </div>
 			</AccordionDetails>
 		</Accordion>
 	);
