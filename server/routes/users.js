@@ -6,10 +6,13 @@
 
 const router = require('koa-router')()
 const { getCaptcha } = require('../controllers/tips')
-const { create, delete: del, login, upload, modify, retrieve, request, search, response } = require('../controllers/users')
+const { create, delete: del, login, upload, modify, retrieve, request, search, response, authVerify } = require('../controllers/users')
 const { auth, checkOwner } = require('../middleware/auth')
 
 router.prefix('/users')
+
+// auth init
+router.get('/auth', auth, authVerify)
 
 router.get('/captcha', getCaptcha)
 router.post('/register', create)

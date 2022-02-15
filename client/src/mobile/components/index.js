@@ -10,9 +10,9 @@ import { COLOR } from '../styles'
 
 // 非导航栏部分的容器样式
 export const Wrapper = styled.div`
-    height: 84vh;
+    height: 92vh;
     width: 100vw;
-
+    overflow: hidden;
     background-color: ${COLOR.bg};
 `
 
@@ -20,6 +20,11 @@ export const Wrapper = styled.div`
 export const TitleWrapper = styled.div`
     height: 8vh;
     width: 100vw;
-    background-color: ${COLOR.title};
+    background-color: ${COLOR.bg};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 300;
+    font-size: 1.5rem;
 `
 

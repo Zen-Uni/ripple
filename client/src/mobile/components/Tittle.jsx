@@ -4,6 +4,7 @@
  * @since 1.0
  */
 
+import { useEffect, useState } from "react";
 import { TitleWrapper } from "./index";
 
 const TITLE_MAP = {
@@ -15,13 +16,22 @@ const TITLE_MAP = {
 
 export default function Tittle() {
 
-    const text = (
-        <div>{TITLE_MAP[1]}</div>
-    )
+    const globalEvent = window.event_emitter
+
+    const [text, setText] = useState('/')
+
+    const onEventHandle = (value) => {
+        setText(value)
+    }
+
+    useEffect(() => {
+        globalEvent.on('title_value', onEventHandle)
+    }, [])
+    console.log(globalEvent)
 
     return (
         <TitleWrapper>
-            {text}
+            {TITLE_MAP[text]}
         </TitleWrapper>
     )
 }

@@ -27,3 +27,4 @@ yarn-error.log*
 
 # personal config
 /server/config/config.js
+/server/public/uploads

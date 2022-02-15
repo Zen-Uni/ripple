@@ -7,19 +7,30 @@
 import { Link, useNavigate } from 'react-router-dom'
 
 import { BottomNavigation, BottomNavigationAction } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { COLOR } from '../styles'
 
 export default function NavBar() {
+    const globalEvent = window.event_emitter
 
-    const [value, setValue] = useState('/')
+    const [value, setValue] = useState(window.location.pathname)
 
     const navigate = useNavigate()
 
+    const handleEventEmit = value => {
+        globalEvent.emit('title_value', value)
+    }
+
+    useEffect(() => {
+        handleEventEmit(value)
+    }, [])
+
     const handleChange = (e, newValue) => {
         setValue(newValue)
+        handleEventEmit(newValue)
         navigate(newValue)
     }
+    console.log(globalEvent)
 
     return (
         <BottomNavigation sx={style} value={value} onChange={handleChange}>
@@ -34,7 +45,7 @@ export default function NavBar() {
 
 // Navbar style
 const style = {
-    width: "100%",
+    width: "100vw",
     height: "8vh",
     position: "absolute",
     bottom: "0",

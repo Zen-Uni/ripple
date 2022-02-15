@@ -9,14 +9,15 @@ const { SECRET } = require('../config/config')
 // 校验 token
 const auth = jwt({ secret: SECRET })
 
+
 // 校验用户权限
 const checkOwner = async (ctx, next) => {
-    console.log('1312123',ctx.state.user.id)
     if (ctx.params.id !== ctx.state.user.id)  {
         ctx.throw(403, "没有操作权限")
     }
     await next()
 } 
+
 
 module.exports = {
     auth,

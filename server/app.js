@@ -7,10 +7,22 @@ const koaBody = require('koa-body')
 const logger = require('koa-logger')
 const parameter = require('koa-parameter')
 const routing = require('./routes')
+const cors = require('koa2-cors')
 // const users = require('./routes/users')
 const path = require('path')
 // error handler
 onerror(app)
+
+// cors
+app.use(cors({
+  origin: '*',
+  exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+  maxAge: 5,
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'DELETE', 'PATCH', 'PUT'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}))
+
 app.use(error({
   postFormat: (err, {
     stack,

@@ -63,7 +63,7 @@ const Errorno = {
     },
     check_login: {
         code: 10004,
-        msg: "用户名或密码错误"
+        msg: "用户邮箱或密码错误"
     },
     search_user: {
         code: 10005,

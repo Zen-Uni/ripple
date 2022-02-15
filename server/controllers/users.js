@@ -11,6 +11,11 @@
  const path = require('path')
 
 class UsersCtl {
+    async authVerify(ctx) {
+        const user = await User.findById(ctx.state.user.id).select('+avatar_url +headline')
+        ctx.body = user
+    }
+
     // TODO: verify 抽象优化
     async create(ctx, next) {
         ctx.verifyParams({
@@ -32,7 +37,7 @@ class UsersCtl {
             }
         })
         const { username, email, password, captcha } = ctx.request.body
-            
+        console.log('bingooooo')
         try {
             // TODO: findOne 优化
             const check_res = await Tip.find({ email, captcha })
@@ -234,12 +239,32 @@ class UsersCtl {
 
     // 辅助接口对应的控制器
     async retrieve(ctx, next) {
+        // mongoose 返回值测试
+        const user = await User.findOne({email: '13670210824@163.com'})
+        console.log('user------', user.__proto__)
+        console.log('keys     --------- ',Object.keys(user))
+        console.log(Object.getOwnPropertyDescriptors(user))
+        console.log('stringify ----- ',JSON.stringify( user))
+        console.log('shallowClone ------- ', {...user})
+        // console.log('User ------- ', User)
+        // console.log(Object.getOwnPropertyDescriptors(user))
+        // console.log(user)
+        // for (const item of user) {
+        //     console.log(item)
+        // }
+        // const test = JSON.parse(JSON.stringify(user))
+        // console.log(Object.keys(test))
+        // console.log(user.__proto__)
         ctx.body = await User.find().select("+friends +moments")
     }
 
     async delete(ctx, next) {
         const { email } = ctx.query
+        console.log(email)
         const user = await User.findOneAndRemove({ email })
+        // for (const item in user) {
+        //     console.log(item)
+        // }
         if (!user) {
             ctx.throw(404, '用户不存在')
         }
