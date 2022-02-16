@@ -10,7 +10,6 @@ import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import UserItemBtn from "./UserItemBtn";
 import "./style.css";
@@ -18,7 +17,7 @@ import "./style.css";
 export default function UserItem(props) {
 	const [expanded, setExpanded] = useState(false);
 	const [remarks, setRemarks] = useState(props.remarks);
-	const [newRemark, setNewRemark] = useState(props.remarks);
+	const [newRemark, setNewRemark] = useState(props.remarks ? props.remarks : '');
 	const [open, setOpen] = useState(false);
 
 	const handleClickOpen = () => {
