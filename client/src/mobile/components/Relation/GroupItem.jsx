@@ -27,20 +27,58 @@ export default function GroupItem(props) {
 	const [openRemark, setRemarkOpen] = useState(false);
 	const navigate = useNavigate();
 
+	/**
+	 * 向目标模块跳转
+	 * @param {string} dest 目标模块
+	 */
 	const jump = (dest) => {
 		console.log("跳转至" + dest);
 		navigate(`/${dest}/${props.name}`);
 	};
 
+	/**
+	 * 处理点击事件
+	 * @param {function} fn 回调函数
+	 * @param {boolean} state 状态值
+	 * @returns null
+	 */
 	const handleClick = (fn, state) => fn(state);
 
+	/**
+	 * 群名更改处理函数
+	 * @param {Object} event 事件
+	 */
 	const handleNameChange = (event) => {
 		setName(event.target.value);
 	};
 
+	/**
+	 * 群备注更改处理函数
+	 * @param {Object} event 事件
+	 */
 	const handleRemarkChange = (event) => {
 		setRemark(event.target.value);
 	};
+
+	/**
+	 * 更新群名
+	 */
+	const updateName = () => {
+		//向服务器请求
+		//...
+
+		handleClick(setRenameOpen, false)
+	}
+
+	/**
+	 * 更新群备注
+	 */
+	const updateRemark = () => {
+		//向服务器请求
+		//...
+		
+		handleClick(setRemarkOpen, false)
+	}
 
 	return (
 		<>
@@ -147,7 +185,7 @@ export default function GroupItem(props) {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => handleClick(setRenameOpen, false)}>
+					<Button onClick={updateName}>
 						就酱
 					</Button>
 				</DialogActions>
@@ -172,7 +210,7 @@ export default function GroupItem(props) {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => handleClick(setRemarkOpen, false)}>
+					<Button onClick={updateRemark}>
 						就酱
 					</Button>
 				</DialogActions>
