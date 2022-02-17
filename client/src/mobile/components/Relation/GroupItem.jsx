@@ -5,11 +5,11 @@ import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -21,8 +21,10 @@ import "./style.css";
 
 export default function GroupItem(props) {
 	const [expanded, setExpanded] = useState(false);
-	const [name, setName] = useState(props.name)
+	const [name, setName] = useState(props.name);
 	const [openRename, setRenameOpen] = useState(false);
+	const [remark, setRemark] = useState(props.remark || '');
+	const [openRemark, setRemarkOpen] = useState(false);
 	const navigate = useNavigate();
 
 	const jump = (dest) => {
@@ -34,6 +36,10 @@ export default function GroupItem(props) {
 
 	const handleNameChange = (event) => {
 		setName(event.target.value);
+	};
+
+	const handleRemarkChange = (event) => {
+		setRemark(event.target.value);
 	};
 
 	return (
@@ -58,6 +64,9 @@ export default function GroupItem(props) {
 							component="div"
 							sx={{ lineHeight: "3rem" }}
 						>
+							<span style={{ opacity: 0.2, marginRight: "1rem" }}>
+								{remark ? `(${remark})` : ""}
+							</span>
 							{name}
 						</Typography>
 					</div>
@@ -69,51 +78,60 @@ export default function GroupItem(props) {
 							size={2}
 							action={() => jump("chat")}
 						/>
-						<UserItemBtn title="备注" size={2} />
+						<UserItemBtn
+							title="备注"
+							size={2}
+							action={() => handleClick(setRemarkOpen, true)}
+						/>
 					</div>
-                    <List>
-					<ListItem disablePadding>
-						<ListItemButton onClick={()=>handleClick(setRenameOpen, true)}>
-							<ListItemText primary="更改群名" />
-						</ListItemButton>
-					</ListItem>
-					<ListItem disablePadding>
-						<ListItemButton>
-							<ListItemText primary="更改群马甲" />
-						</ListItemButton>
-					</ListItem>
-					<ListItem disablePadding>
-						<ListItemButton>
-							<ListItemText primary="邀请好友" />
-						</ListItemButton>
-					</ListItem>
-					<Divider />
-					<ListItem disablePadding>
-						<ListItemButton>
-							<ListItemText primary="踢除成员" />
-						</ListItemButton>
-					</ListItem>
-					<ListItem disablePadding>
-						<ListItemButton>
-							<ListItemText primary="解散改聊" />
-						</ListItemButton>
-					</ListItem>
-					<ListItem disablePadding>
-						<ListItemButton>
-							<ListItemText primary="转让该群" />
-						</ListItemButton>
-					</ListItem>
-					<Divider />
-					<ListItem disablePadding>
-						<ListItemButton>
-							<ListItemText primary="删除该群" />
-						</ListItemButton>
-					</ListItem>
-				</List>
+					<List>
+						<ListItem disablePadding>
+							<ListItemButton
+								onClick={() => handleClick(setRenameOpen, true)}
+							>
+								<ListItemText primary="更改群名" />
+							</ListItemButton>
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemButton>
+								<ListItemText primary="更改群马甲" />
+							</ListItemButton>
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemButton>
+								<ListItemText primary="邀请好友" />
+							</ListItemButton>
+						</ListItem>
+						<Divider />
+						<ListItem disablePadding>
+							<ListItemButton>
+								<ListItemText primary="踢除成员" />
+							</ListItemButton>
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemButton>
+								<ListItemText primary="解散改聊" />
+							</ListItemButton>
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemButton>
+								<ListItemText primary="转让该群" />
+							</ListItemButton>
+						</ListItem>
+						<Divider />
+						<ListItem disablePadding>
+							<ListItemButton>
+								<ListItemText primary="删除该群" />
+							</ListItemButton>
+						</ListItem>
+					</List>
 				</AccordionDetails>
 			</Accordion>
 
-			<Dialog open={openRename} onClose={()=>handleClick(setRenameOpen, false)}>
+			<Dialog
+				open={openRename}
+				onClose={() => handleClick(setRenameOpen, false)}
+			>
 				<DialogTitle>给{name}备注</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -129,7 +147,34 @@ export default function GroupItem(props) {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={()=>handleClick(setRenameOpen, false)}>就酱</Button>
+					<Button onClick={() => handleClick(setRenameOpen, false)}>
+						就酱
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={openRemark}
+				onClose={() => handleClick(setRemarkOpen, false)}
+			>
+				<DialogTitle>给群 {name} 备注</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="remark"
+						label="备注"
+						type="text"
+						fullWidth
+						variant="standard"
+						value={remark}
+						onChange={handleRemarkChange}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => handleClick(setRemarkOpen, false)}>
+						就酱
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</>
