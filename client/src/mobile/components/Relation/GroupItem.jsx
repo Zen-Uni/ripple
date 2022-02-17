@@ -5,6 +5,11 @@ import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 import UserItemBtn from "./UserItemBtn";
 import "./style.css";
 
@@ -51,8 +56,47 @@ export default function GroupItem(props) {
 							size={2}
 							action={() => jump("chat")}
 						/>
-						<UserItemBtn title="设置" size={2} />
+						<UserItemBtn title="备注" size={2} />
 					</div>
+                    <List>
+					<ListItem disablePadding>
+						<ListItemButton>
+							<ListItemText primary="更改群名" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem disablePadding>
+						<ListItemButton>
+							<ListItemText primary="更改群马甲" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem disablePadding>
+						<ListItemButton>
+							<ListItemText primary="邀请好友" />
+						</ListItemButton>
+					</ListItem>
+					<Divider />
+					<ListItem disablePadding>
+						<ListItemButton>
+							<ListItemText primary="踢除成员" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem disablePadding>
+						<ListItemButton>
+							<ListItemText primary="解散改聊" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem disablePadding>
+						<ListItemButton>
+							<ListItemText primary="转让该群" />
+						</ListItemButton>
+					</ListItem>
+					<Divider />
+					<ListItem disablePadding>
+						<ListItemButton>
+							<ListItemText primary="删除该群" />
+						</ListItemButton>
+					</ListItem>
+				</List>
 				</AccordionDetails>
 			</Accordion>
 		</>

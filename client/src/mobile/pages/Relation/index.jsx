@@ -4,15 +4,25 @@
  * @since 1.0
  */
 
-import UserItem from '../../components/Relation/UserItem.jsx'
-import GroupItem from '../../components/Relation/GroupItem.jsx'
+import UserItem from "../../components/Relation/UserItem.jsx";
+import GroupItem from "../../components/Relation/GroupItem.jsx";
+
 
 export default function Relation() {
-    return (
-        <>
-            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="季悠然" remarks="小号"></UserItem>
-            <UserItem avatar="https://mui.com/static/images/avatar/1.jpg" name="卢本伟"></UserItem>
-            <GroupItem  name="后宫群"></GroupItem>
-        </>
-    )
+	return (
+		<>
+			<UserItem
+				avatar="https://mui.com/static/images/avatar/1.jpg"
+				name="季悠然"
+				remarks="小号"
+			></UserItem>
+			<UserItem
+				avatar="https://mui.com/static/images/avatar/1.jpg"
+				name="卢本伟"
+			></UserItem>
+			<GroupItem name="后宫群"></GroupItem>
+			<GroupItem name="学习交流群"></GroupItem>
+			<GroupItem name="卷群"></GroupItem>
+		</>
+	);
 }
