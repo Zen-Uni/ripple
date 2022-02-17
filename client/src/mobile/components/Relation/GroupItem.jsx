@@ -21,10 +21,12 @@ import "./style.css";
 
 export default function GroupItem(props) {
 	const [expanded, setExpanded] = useState(false);
-	const [name, setName] = useState(props.name || '默认群名');
+	const [name, setName] = useState(props.name || "默认群名");
 	const [openRename, setRenameOpen] = useState(false);
-	const [remark, setRemark] = useState(props.remark || '');
+	const [remark, setRemark] = useState(props.remark || "");
 	const [openRemark, setRemarkOpen] = useState(false);
+	const [openQuit, setQuitOpen] = useState(false);
+	const [openDelete, setDeleteOpen] = useState(false);
 	const navigate = useNavigate();
 
 	/**
@@ -67,8 +69,8 @@ export default function GroupItem(props) {
 		//向服务器请求
 		//...
 
-		handleClick(setRenameOpen, false)
-	}
+		handleClick(setRenameOpen, false);
+	};
 
 	/**
 	 * 更新群备注
@@ -76,9 +78,29 @@ export default function GroupItem(props) {
 	const updateRemark = () => {
 		//向服务器请求
 		//...
-		
-		handleClick(setRemarkOpen, false)
-	}
+
+		handleClick(setRemarkOpen, false);
+	};
+
+	/**
+	 * 请求退群
+	 */
+	const quitGroup = () => {
+		//向服务器请求
+		//...
+
+		handleClick(setQuitOpen, false);
+	};
+
+	/**
+	 * 请求删除群聊
+	 */
+	const deleteGroup = () => {
+		//向服务器请求
+		//...
+
+		handleClick(setDeleteOpen, false);
+	};
 
 	return (
 		<>
@@ -158,8 +180,12 @@ export default function GroupItem(props) {
 						</ListItem>
 						<Divider />
 						<ListItem disablePadding>
-							<ListItemButton>
-								<ListItemText primary="删除该群" />
+							<ListItemButton
+								onClick={() => {
+									handleClick(setQuitOpen, true);
+								}}
+							>
+								<ListItemText primary="退出该群" />
 							</ListItemButton>
 						</ListItem>
 					</List>
@@ -185,9 +211,7 @@ export default function GroupItem(props) {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={updateName}>
-						就酱
-					</Button>
+					<Button onClick={updateName}>就酱</Button>
 				</DialogActions>
 			</Dialog>
 
@@ -210,8 +234,29 @@ export default function GroupItem(props) {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={updateRemark}>
-						就酱
+					<Button onClick={updateRemark}>就酱</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={openQuit}
+				onClose={quitGroup}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">
+					{`真的要退出 ${name} 吗`}
+				</DialogTitle>
+				<DialogActions>
+					<Button
+						onClick={() => {
+							handleClick(setQuitOpen, false);
+						}}
+					>
+						我再想想
+					</Button>
+					<Button onClick={quitGroup} autoFocus>
+						去意已决
 					</Button>
 				</DialogActions>
 			</Dialog>
