@@ -21,7 +21,7 @@ import "./style.css";
 
 export default function GroupItem(props) {
 	const [expanded, setExpanded] = useState(false);
-	const [name, setName] = useState(props.name);
+	const [name, setName] = useState(props.name || '默认群名');
 	const [openRename, setRenameOpen] = useState(false);
 	const [remark, setRemark] = useState(props.remark || '');
 	const [openRemark, setRemarkOpen] = useState(false);
