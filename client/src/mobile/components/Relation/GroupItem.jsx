@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
@@ -17,7 +17,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import UserItemBtn from "./UserItemBtn";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import "./style.css";
+
+const Alert = forwardRef(function Alert(props, ref) {
+	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
 
 export default function GroupItem(props) {
 	const [expanded, setExpanded] = useState(false);
@@ -27,6 +33,7 @@ export default function GroupItem(props) {
 	const [openRemark, setRemarkOpen] = useState(false);
 	const [openQuit, setQuitOpen] = useState(false);
 	const [openDelete, setDeleteOpen] = useState(false);
+	const [openAlert, setAlertOpen] = useState(false)
 	const navigate = useNavigate();
 
 	/**
@@ -70,6 +77,7 @@ export default function GroupItem(props) {
 		//...
 
 		handleClick(setRenameOpen, false);
+		setAlertOpen(true);
 	};
 
 	/**
@@ -80,6 +88,7 @@ export default function GroupItem(props) {
 		//...
 
 		handleClick(setRemarkOpen, false);
+		setAlertOpen(true);
 	};
 
 	/**
@@ -90,6 +99,7 @@ export default function GroupItem(props) {
 		//...
 
 		handleClick(setQuitOpen, false);
+		setAlertOpen(true);
 	};
 
 	/**
@@ -100,6 +110,7 @@ export default function GroupItem(props) {
 		//...
 
 		handleClick(setDeleteOpen, false);
+		setAlertOpen(true);
 	};
 
 	return (
@@ -157,20 +168,23 @@ export default function GroupItem(props) {
 								<ListItemText primary="更改群马甲" />
 							</ListItemButton>
 						</ListItem>
+
+						<Divider />
 						<ListItem disablePadding>
 							<ListItemButton>
 								<ListItemText primary="邀请好友" />
 							</ListItemButton>
 						</ListItem>
-						<Divider />
 						<ListItem disablePadding>
 							<ListItemButton>
 								<ListItemText primary="踢除成员" />
 							</ListItemButton>
 						</ListItem>
 						<ListItem disablePadding>
-							<ListItemButton>
-								<ListItemText primary="解散改聊" />
+							<ListItemButton
+								onClick={() => handleClick(setDeleteOpen, true)}
+							>
+								<ListItemText primary="解散该群" />
 							</ListItemButton>
 						</ListItem>
 						<ListItem disablePadding>
@@ -260,6 +274,39 @@ export default function GroupItem(props) {
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			<Dialog
+				open={openDelete}
+				onClose={deleteGroup}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">
+					{`真的要解散 ${name} 吗`}
+				</DialogTitle>
+				<DialogActions>
+					<Button
+						onClick={() => {
+							handleClick(setDeleteOpen, false);
+						}}
+					>
+						我再想想
+					</Button>
+					<Button onClick={deleteGroup} autoFocus>
+						我意已决
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Snackbar open={openAlert} autoHideDuration={6000} onClose={()=>handleClick(setAlertOpen, false)}>
+				<Alert
+					onClose={()=>handleClick(setAlertOpen, false)}
+					severity="success"
+					sx={{ width: "100%" }}
+				>
+					操作成功
+				</Alert>
+			</Snackbar>
 		</>
 	);
 }
