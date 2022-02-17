@@ -10,17 +10,30 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import UserItemBtn from "./UserItemBtn";
 import "./style.css";
 
 export default function GroupItem(props) {
 	const [expanded, setExpanded] = useState(false);
-
+	const [name, setName] = useState(props.name)
+	const [openRename, setRenameOpen] = useState(false);
 	const navigate = useNavigate();
 
 	const jump = (dest) => {
 		console.log("跳转至" + dest);
 		navigate(`/${dest}/${props.name}`);
+	};
+
+	const handleClick = (fn, state) => fn(state);
+
+	const handleNameChange = (event) => {
+		setName(event.target.value);
 	};
 
 	return (
@@ -38,14 +51,14 @@ export default function GroupItem(props) {
 							alt={props.name}
 							sx={{ width: "3rem", height: "3rem" }}
 						>
-							{props.name[0]}
+							{name[0]}
 						</Avatar>
 						<Typography
 							variant="h6"
 							component="div"
 							sx={{ lineHeight: "3rem" }}
 						>
-							{props.name}
+							{name}
 						</Typography>
 					</div>
 				</AccordionSummary>
@@ -60,7 +73,7 @@ export default function GroupItem(props) {
 					</div>
                     <List>
 					<ListItem disablePadding>
-						<ListItemButton>
+						<ListItemButton onClick={()=>handleClick(setRenameOpen, true)}>
 							<ListItemText primary="更改群名" />
 						</ListItemButton>
 					</ListItem>
@@ -99,6 +112,26 @@ export default function GroupItem(props) {
 				</List>
 				</AccordionDetails>
 			</Accordion>
+
+			<Dialog open={openRename} onClose={()=>handleClick(setRenameOpen, false)}>
+				<DialogTitle>给{name}备注</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="name"
+						label="名称"
+						type="text"
+						fullWidth
+						variant="standard"
+						value={name}
+						onChange={handleNameChange}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={()=>handleClick(setRenameOpen, false)}>就酱</Button>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 }
