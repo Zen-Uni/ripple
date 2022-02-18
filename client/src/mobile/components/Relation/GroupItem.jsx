@@ -236,7 +236,7 @@ export default function GroupItem(props) {
 							</ListItemButton>
 						</ListItem>
 						<ListItem disablePadding>
-							<ListItemButton>
+							<ListItemButton onClick={() => handleClick(setTransferOpen, true)}>
 								<ListItemText primary="转让该群" />
 							</ListItemButton>
 						</ListItem>
@@ -320,6 +320,29 @@ export default function GroupItem(props) {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={kickMember}>就酱</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={openTransfer}
+				onClose={() => handleClick(setTransferOpen, false)}
+			>
+				<DialogTitle>踢除成员</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="transfer"
+						label="新群主邮箱"
+						type="text"
+						fullWidth
+						variant="standard"
+						value={email}
+						onChange={handleEmailChange}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={transferGroup}>就酱</Button>
 				</DialogActions>
 			</Dialog>
 
