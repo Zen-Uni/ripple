@@ -1,0 +1,10 @@
+.relation-header {
+    margin: 1rem 1rem 5rem;
+    position: relative;
+}
+
+.relation-subtitle {
+    opacity: 0.3;
+    letter-spacing: 0.1rem!important;
+    font-style: italic; 
+}
