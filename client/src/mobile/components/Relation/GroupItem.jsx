@@ -30,10 +30,14 @@ export default function GroupItem(props) {
 	const [name, setName] = useState(props.name || "默认群名");
 	const [openRename, setRenameOpen] = useState(false);
 	const [remark, setRemark] = useState(props.remark || "");
+	const [email, setEmail] = useState('');
 	const [openRemark, setRemarkOpen] = useState(false);
 	const [openQuit, setQuitOpen] = useState(false);
 	const [openDelete, setDeleteOpen] = useState(false);
-	const [openAlert, setAlertOpen] = useState(false)
+	const [openAlert, setAlertOpen] = useState(false);
+	const [openTransfer, setTransferOpen] = useState(false);
+	const [openInvite, setInviteOpen] = useState(false);
+	const [openKick, setKickOpen] = useState(false);
 	const navigate = useNavigate();
 
 	/**
@@ -67,6 +71,14 @@ export default function GroupItem(props) {
 	 */
 	const handleRemarkChange = (event) => {
 		setRemark(event.target.value);
+	};
+
+	/**
+	 * 目标邮箱更改处理函数
+	 * @param {Object} event 事件
+	 */
+	 const handleEmailChange = (event) => {
+		setEmail(event.target.value);
 	};
 
 	/**
@@ -111,6 +123,42 @@ export default function GroupItem(props) {
 
 		handleClick(setDeleteOpen, false);
 		setAlertOpen(true);
+	};
+
+	/**
+	 * 邀请好友
+	 */
+	 const inviteFriend = () => {
+		//向服务器请求
+		//...
+
+		handleClick(setInviteOpen, false);
+		setAlertOpen(true);
+		setEmail('');
+	};
+
+	/**
+	 * 邀请好友
+	 */
+	 const transferGroup = () => {
+		//向服务器请求
+		//...
+
+		handleClick(setTransferOpen, false);
+		setAlertOpen(true);
+		setEmail('');
+	};
+
+	/**
+	 * 邀请好友
+	 */
+	 const kickMember = () => {
+		//向服务器请求
+		//...
+
+		handleClick(setKickOpen, false);
+		setAlertOpen(true);
+		setEmail('');
 	};
 
 	return (
@@ -176,7 +224,7 @@ export default function GroupItem(props) {
 							</ListItemButton>
 						</ListItem>
 						<ListItem disablePadding>
-							<ListItemButton>
+							<ListItemButton onClick={() => handleClick(setKickOpen, true)}>
 								<ListItemText primary="踢除成员" />
 							</ListItemButton>
 						</ListItem>
@@ -249,6 +297,29 @@ export default function GroupItem(props) {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={updateRemark}>就酱</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={openKick}
+				onClose={() => handleClick(setKickOpen, false)}
+			>
+				<DialogTitle>踢除成员</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="kick"
+						label="成员邮箱"
+						type="text"
+						fullWidth
+						variant="standard"
+						value={email}
+						onChange={handleEmailChange}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={kickMember}>就酱</Button>
 				</DialogActions>
 			</Dialog>
 
