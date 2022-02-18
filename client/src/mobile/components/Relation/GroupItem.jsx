@@ -17,20 +17,20 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import UserItemBtn from "./UserItemBtn";
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import "./style.css";
 
 const Alert = forwardRef(function Alert(props, ref) {
 	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
+});
 
 export default function GroupItem(props) {
 	const [expanded, setExpanded] = useState(false);
 	const [name, setName] = useState(props.name || "默认群名");
 	const [openRename, setRenameOpen] = useState(false);
 	const [remark, setRemark] = useState(props.remark || "");
-	const [email, setEmail] = useState('');
+	const [email, setEmail] = useState("");
 	const [openRemark, setRemarkOpen] = useState(false);
 	const [openQuit, setQuitOpen] = useState(false);
 	const [openDelete, setDeleteOpen] = useState(false);
@@ -77,7 +77,7 @@ export default function GroupItem(props) {
 	 * 目标邮箱更改处理函数
 	 * @param {Object} event 事件
 	 */
-	 const handleEmailChange = (event) => {
+	const handleEmailChange = (event) => {
 		setEmail(event.target.value);
 	};
 
@@ -128,38 +128,58 @@ export default function GroupItem(props) {
 	/**
 	 * 邀请好友
 	 */
-	 const inviteFriend = () => {
+	const inviteFriend = () => {
 		//向服务器请求
 		//...
 
-		handleClick(setInviteOpen, false);
-		setAlertOpen(true);
-		setEmail('');
+		if (checkEmail(email)) {
+			handleClick(setInviteOpen, false);
+			setAlertOpen(true);
+			setEmail("");
+		} else {
+			alert("请检查邮箱是否正确");
+		}
 	};
 
 	/**
 	 * 邀请好友
 	 */
-	 const transferGroup = () => {
+	const transferGroup = () => {
 		//向服务器请求
 		//...
 
-		handleClick(setTransferOpen, false);
-		setAlertOpen(true);
-		setEmail('');
+		if (checkEmail(email)) {
+			handleClick(setTransferOpen, false);
+			setAlertOpen(true);
+			setEmail("");
+		} else {
+			alert("请检查邮箱是否正确");
+		}
 	};
 
 	/**
 	 * 邀请好友
 	 */
-	 const kickMember = () => {
+	const kickMember = () => {
 		//向服务器请求
 		//...
 
-		handleClick(setKickOpen, false);
-		setAlertOpen(true);
-		setEmail('');
+		if (checkEmail(email)) {
+			handleClick(setKickOpen, false);
+			setAlertOpen(true);
+			setEmail("");
+		} else {
+			alert("请检查邮箱是否正确");
+		}
 	};
+
+	/**
+	 * 邮箱是否符合规范
+	 * @param {string} email 目标邮箱
+	 * @returns boolean
+	 */
+	const checkEmail = (email) =>
+		/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(email);
 
 	return (
 		<>
@@ -219,12 +239,16 @@ export default function GroupItem(props) {
 
 						<Divider />
 						<ListItem disablePadding>
-							<ListItemButton onClick={() => handleClick(setInviteOpen, true)}>
+							<ListItemButton
+								onClick={() => handleClick(setInviteOpen, true)}
+							>
 								<ListItemText primary="邀请好友" />
 							</ListItemButton>
 						</ListItem>
 						<ListItem disablePadding>
-							<ListItemButton onClick={() => handleClick(setKickOpen, true)}>
+							<ListItemButton
+								onClick={() => handleClick(setKickOpen, true)}
+							>
 								<ListItemText primary="踢除成员" />
 							</ListItemButton>
 						</ListItem>
@@ -236,7 +260,11 @@ export default function GroupItem(props) {
 							</ListItemButton>
 						</ListItem>
 						<ListItem disablePadding>
-							<ListItemButton onClick={() => handleClick(setTransferOpen, true)}>
+							<ListItemButton
+								onClick={() =>
+									handleClick(setTransferOpen, true)
+								}
+							>
 								<ListItemText primary="转让该群" />
 							</ListItemButton>
 						</ListItem>
@@ -415,9 +443,13 @@ export default function GroupItem(props) {
 				</DialogActions>
 			</Dialog>
 
-			<Snackbar open={openAlert} autoHideDuration={6000} onClose={()=>handleClick(setAlertOpen, false)}>
+			<Snackbar
+				open={openAlert}
+				autoHideDuration={6000}
+				onClose={() => handleClick(setAlertOpen, false)}
+			>
 				<Alert
-					onClose={()=>handleClick(setAlertOpen, false)}
+					onClose={() => handleClick(setAlertOpen, false)}
 					severity="success"
 					sx={{ width: "100%" }}
 				>
