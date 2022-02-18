@@ -219,7 +219,7 @@ export default function GroupItem(props) {
 
 						<Divider />
 						<ListItem disablePadding>
-							<ListItemButton>
+							<ListItemButton onClick={() => handleClick(setInviteOpen, true)}>
 								<ListItemText primary="邀请好友" />
 							</ListItemButton>
 						</ListItem>
@@ -327,7 +327,7 @@ export default function GroupItem(props) {
 				open={openTransfer}
 				onClose={() => handleClick(setTransferOpen, false)}
 			>
-				<DialogTitle>踢除成员</DialogTitle>
+				<DialogTitle>转让群</DialogTitle>
 				<DialogContent>
 					<TextField
 						autoFocus
@@ -343,6 +343,29 @@ export default function GroupItem(props) {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={transferGroup}>就酱</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={openInvite}
+				onClose={() => handleClick(setInviteOpen, false)}
+			>
+				<DialogTitle>邀请成员</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="transfer"
+						label="好友邮箱"
+						type="text"
+						fullWidth
+						variant="standard"
+						value={email}
+						onChange={handleEmailChange}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={inviteFriend}>就酱</Button>
 				</DialogActions>
 			</Dialog>
 
