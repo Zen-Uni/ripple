@@ -179,7 +179,7 @@ export default function GroupItem(props) {
 	 * @returns boolean
 	 */
 	const checkEmail = (email) =>
-		/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(email);
+		/^([a-zA-Z]|[0-9])(\w|-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(email);
 
 	return (
 		<>
@@ -188,10 +188,10 @@ export default function GroupItem(props) {
 				onChange={() => {
 					setExpanded(!expanded);
 				}}
-				className="user-item-wrapper"
+				className="group-item-wrapper"
 			>
-				<AccordionSummary className="user-item-header">
-					<div className="user-item">
+				<AccordionSummary className="group-item-header">
+					<div className="group-item">
 						<Avatar
 							alt={props.name}
 							sx={{ width: "3rem", height: "3rem" }}
@@ -211,7 +211,7 @@ export default function GroupItem(props) {
 					</div>
 				</AccordionSummary>
 				<AccordionDetails>
-					<div className="user-item-btn-group">
+					<div className="group-item-btn-group">
 						<UserItemBtn
 							title="聊天"
 							size={2}
