@@ -50,6 +50,49 @@ export default function Relation() {
 		setValue(newValue);
 	};
 
+	const friends = [
+		{
+			avatar: "https://gravatar.loli.top/avatar/87e0f8d2f0f70987061cec6376cb7f97?s=200&r=G&d=",
+			name: "季悠然",
+			remarks: "小号",
+		},
+		{
+			avatar: "https://cdn.exia.xyz/img/upload/joseph.jpg",
+			name: "Jostar",
+			remarks: "十字军",
+		},
+		{
+			avatar: "https://cdn.exia.xyz/img/upload/jotaro.jpg",
+			name: "Jotaro",
+			remarks: "十字军",
+		},
+		{
+			avatar: "https://cdn.exia.xyz/img/upload/bobo.jpg",
+			name: "波鲁纳雷夫",
+			remarks: "波波",
+		},
+		{
+			avatar: "https://mui.com/static/images/avatar/1.jpg",
+			name: "(0-0)",
+			remarks: "",
+		},
+	];
+
+	const groups = [
+		{
+			name: "学习群",
+		},
+		{
+			name: "卷群",
+		},
+		{
+			name: "老曾家",
+		},
+		{
+			name: "绝密",
+		},
+	];
+
 	return (
 		<>
 			<div className="relation-header">
@@ -61,33 +104,60 @@ export default function Relation() {
 				>
 					人际
 				</Typography>
-				<Typography variant="h6" gutterBottom component="div" className={"relation-subtitle"}>
+				<Typography
+					variant="h6"
+					gutterBottom
+					component="div"
+					className={"relation-subtitle"}
+				>
 					relation
 				</Typography>
 			</div>
 
 			<Box>
-				<Tabs value={value} onChange={handleChange} indicatorColor={"tansparent"}>
-					<Tab label="好友" {...a11yProps(0)} disableFocusRipple={true}/>
-					<Tab label="群聊" {...a11yProps(1)} disableFocusRipple={true}/>
+				<Tabs value={value} onChange={handleChange}>
+					<Tab
+						label="好友"
+						{...a11yProps(0)}
+						disableFocusRipple={true}
+					/>
+					<Tab
+						label="群聊"
+						{...a11yProps(1)}
+						disableFocusRipple={true}
+					/>
 				</Tabs>
 			</Box>
 
 			<TabPanel value={value} index={0}>
-				<UserItem
-					avatar="https://mui.com/static/images/avatar/1.jpg"
-					name="季悠然"
-					remarks="小号"
-				></UserItem>
-				<UserItem
-					avatar="https://mui.com/static/images/avatar/1.jpg"
-					name="卢本伟"
-				></UserItem>
+				{friends.map((f) => (
+					<UserItem
+						avatar={f.avatar}
+						name={f.name}
+						remarks={f.remarks}
+						key={f.name}
+					></UserItem>
+				))}
+
+				<Typography
+					gutterBottom
+					component="div"
+					className={"relation-bottom-text"}
+				>
+					到底咯~
+				</Typography>
 			</TabPanel>
 			<TabPanel value={value} index={1}>
-				<GroupItem name="后宫群"></GroupItem>
-				<GroupItem name="学习交流群"></GroupItem>
-				<GroupItem name="卷群"></GroupItem>
+				{groups.map((g) => (
+					<GroupItem name={g.name} key={g.name}></GroupItem>
+				))}
+				<Typography
+					gutterBottom
+					component="div"
+					className={"relation-bottom-text"}
+				>
+					到底咯~
+				</Typography>
 			</TabPanel>
 		</>
 	);
