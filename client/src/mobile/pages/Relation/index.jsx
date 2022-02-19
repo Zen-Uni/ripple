@@ -144,7 +144,7 @@ export default function Relation() {
 					component="div"
 					className={"relation-bottom-text"}
 				>
-					到底咯~
+					共{friends.length}项
 				</Typography>
 			</TabPanel>
 			<TabPanel value={value} index={1}>
@@ -156,7 +156,7 @@ export default function Relation() {
 					component="div"
 					className={"relation-bottom-text"}
 				>
-					到底咯~
+					共{groups.length}项
 				</Typography>
 			</TabPanel>
 		</>
