@@ -86,6 +86,33 @@ const captchaSchema = new Schema({
     createdAt: { type: Date, expires: 600 },
 })
 
+const postSchema = new Schema({
+    subject: { type: ObjectId, ref: 'User' },
+    time: Date,
+    type: {
+        type: String,
+        enum: ['text', 'img', 'video', 'group'], // text纯文本 img图文(img:url) video视频(video:url) group(link:group_id)
+    },
+    content: String,
+    likes: [ObjectId],
+})
+
+const postCommentSchema = new Schema({
+    subject: { type: ObjectId, ref: 'User' },
+    object: { type: ObjectId, ref: 'User' },
+    target: { type: ObjectId, ref: 'Post' },
+    time: Date,
+    content: String,
+})
+
+const postReportSchema = new Schema({
+    subject: { type: ObjectId, ref: 'User' },
+    post: { type: ObjectId, ref: 'Post' },
+    handler: { type: ObjectId, ref: 'User' },
+    status: { type: Number, enum: [0, 1, 10, 11, 12] }, // 0正常 1被举报隐藏 10被举报受理不通过 11被举报受理通过 12被举报未受理
+    content: String,
+})
+
 module.exports = {
     User: model('User', userSchema, 'users'),
     Group: model('Group', groupSchema, 'groups'),
@@ -99,4 +126,7 @@ module.exports = {
         'group_message_records',
     ),
     Captcha: model('Captcha', captchaSchema, 'captchas'),
+    Post: model('Post', postSchema, 'posts'),
+    PostComment: model('PostComment', postCommentSchema, 'post_comments'),
+    PostReport: model('PostReport', postReportSchema, 'post_reports'),
 }

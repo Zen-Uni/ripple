@@ -1,6 +1,7 @@
 const router = require('koa-router')()
 const {
     User,
+    Friend,
     Group,
     Member,
     UserMessage,
@@ -100,6 +101,22 @@ module.exports = async (app) => {
             })
         ctx.body = {
             msg: '测试：添加群成员成功',
+        }
+    })
+
+    router.post('/becomeFriends', async (ctx, next) => {
+        const {
+            request: {
+                body: { subject, object },
+            },
+        } = ctx
+        await new Friend({
+            subject: new ObjectId(subject),
+            object: new ObjectId(object),
+            status: 1,
+        }).save()
+        ctx.body = {
+            msg: '已添加好友关系',
         }
     })
 

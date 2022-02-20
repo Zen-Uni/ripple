@@ -16,6 +16,7 @@ const urlWhiteList = [
     '/test/newUserToken/:userId',
     '/test/newGroup',
     '/test/becomeNewMember',
+    '/test/becomeFriends',
 ].map((v) => '/api' + v)
 // TODO 添加对请求方法的判断
 

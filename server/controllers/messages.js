@@ -116,7 +116,7 @@ class UserMessagesCtl {
             .exec()
         ctx.body = {
             code: CODES_MESSAGES.SUCCESS,
-            mas: '查询单聊消息成功',
+            msg: '查询单聊消息成功',
             data: messages,
         }
     }
@@ -158,7 +158,7 @@ class UserMessagesCtl {
         distributeUserMessage(userId, msg)
         ctx.body = {
             code: CODES_MESSAGES.SUCCESS,
-            mas: '单聊消息发送成功',
+            msg: '单聊消息发送成功',
         }
     }
     async putUserMessage(ctx, next) {
@@ -278,7 +278,7 @@ class UserMessagesCtl {
             .exec()
         ctx.body = {
             code: CODES_MESSAGES.SUCCESS,
-            mas: '查询群聊消息成功',
+            msg: '查询群聊消息成功',
             data: groupMessages,
         }
     }
@@ -320,7 +320,7 @@ class UserMessagesCtl {
         distributeGroupMessage(groupId, msg) // TODO 失败时回滚
         ctx.body = {
             code: CODES_MESSAGES.SUCCESS,
-            mas: '群聊消息发送成功',
+            msg: '群聊消息发送成功',
         }
     }
     async putGroupMessage(ctx, next) {
