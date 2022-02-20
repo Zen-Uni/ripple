@@ -41,27 +41,16 @@ class PostsCtl {
                 body: { page, pageSize },
             },
         } = ctx
-        const mapFriends = new Map()
-        ;(
-            await Friend.aggregate()
-                .match({
-                    $or: [
-                        { subject: new ObjectId(sub) },
-                        { object: new ObjectId(sub) },
-                    ],
-                    status: 1,
-                })
-                .project('-_id subject object')
+        const friends = (
+            await Friend.find({
+                subject: new ObjectId(sub),
+                status: { $in: [1, 11] },
+            })
+                .select('object')
                 .exec()
-        ).forEach((v) => {
-            mapFriends.set(v.subject, 1)
-            mapFriends.set(v.object, 1)
-        })
-        const friends = []
-        mapFriends.forEach((v, key) => friends.push(key))
-        friends.map((v) => new ObjectId(v))
+        ).map((v) => v.object)
         const posts = await Post.find({
-            subject: { $in: friends },
+            subject: { $in: friends.concat([new ObjectId(sub)]) },
         })
             .sort('-_id')
             .select('-__v')

@@ -13,7 +13,7 @@ const userSchema = new Schema({
 })
 
 const groupSchema = new Schema({
-    creator: { type: ObjectId, ref: 'User' },
+    owner: { type: ObjectId, ref: 'User' },
     admins: [{ type: ObjectId, ref: 'User' }],
     groupName: String,
     avatarUrl: String,
@@ -28,11 +28,12 @@ const friendSchema = new Schema({
     },
     status: {
         type: Number,
-        enum: [0, 1, 2], // 0object未处理 1object已同意 2object已拒绝
+        enum: [0, 1, 2, 11, 12], // 0object未处理 1object已同意 2object已拒绝 11subject被同意 12subject被拒绝
     },
     tip: String,
     memo: String,
 })
+friendSchema.index({ subject: 1, object: 1 }, { unique: true })
 
 const memberSchema = new Schema({
     member: { type: ObjectId, ref: 'User' },
@@ -43,11 +44,12 @@ const memberSchema = new Schema({
     },
     status: {
         type: Number,
-        enum: [0, 1, 2], // 0未处理 1已同意 2已拒绝
+        enum: [0, 1, 2, 11], // 0未处理 1已同意 2已拒绝 11被邀请
     },
     tip: String,
     memo: String,
 })
+memberSchema.index({ member: 1, group: 1 }, { unique: true })
 
 const userMessageSchema = new Schema({
     sender: { type: ObjectId, ref: 'User' },

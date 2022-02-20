@@ -62,7 +62,7 @@ module.exports = async (app) => {
             },
         } = ctx
         await new Group({
-            creator: sub,
+            owner: sub,
             groupName,
         }).save()
         ctx.body = {
@@ -110,11 +110,18 @@ module.exports = async (app) => {
                 body: { subject, object },
             },
         } = ctx
-        await new Friend({
-            subject: new ObjectId(subject),
-            object: new ObjectId(object),
-            status: 1,
-        }).save()
+        await Promise.all([
+            await new Friend({
+                subject: new ObjectId(subject),
+                object: new ObjectId(object),
+                status: 1,
+            }).save(),
+            await new Friend({
+                subject: new ObjectId(object),
+                object: new ObjectId(subject),
+                status: 11,
+            }).save(),
+        ])
         ctx.body = {
             msg: '已添加好友关系',
         }
