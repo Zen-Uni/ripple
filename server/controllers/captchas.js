@@ -30,11 +30,28 @@ class CaptchaCtl {
             email,
             createdAt: new Date(),
         })
-        console.debug(captcha)
-        await captcha.save()
+        await captcha.save().catch((e) => {
+            e.res = {
+                status: 500,
+                body: {
+                    code: CODES_CAPTCHAS.ERROR_CAPTCHA_NOT_SAVE,
+                    msg: '验证码生成失败',
+                },
+            }
+            throw e
+        })
         await sendMail(email, 'Ripple Register Captcha | Ripple注册验证码', {
             text: `You are registering for a Ripple account | 您正在注册Ripple账户...\nCaptcha | 注册码: ${captcha.value}`,
-        })
+        }).catch((e) => {
+            e.res = {
+                status: 500,
+                body: {
+                    code: CODES_CAPTCHAS.ERROR_OTHER,
+                    msg: '验证码发送失败',
+                },
+            }
+            throw e
+        }) // TODO 验证码邮件HTML样式
         ctx.body = {
             code: CODES_CAPTCHAS.SUCCESS,
             msg: '验证码发送成功, 有效时间为10分钟',

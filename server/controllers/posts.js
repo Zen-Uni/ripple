@@ -16,20 +16,13 @@ const {
 } = require('../database')
 const { CODES_POSTS } = require('../const/codes')
 
-const checkIsFriends = async (first, second) => {
-    const friends = await Friend.find({
-        $or: [
-            {
-                subject: first,
-                object: second,
-            },
-            {
-                subject: second,
-                object: first,
-            },
-        ],
-    })
-    if (friends.length === 0) return false
+const checkIsFriends = async (subject, object) => {
+    const friend = await Friend.findOne({
+        subject,
+        object,
+        status: { $in: [1, 11] },
+    }).catch(() => null)
+    if (friend === null) return false
     return true
 }
 
@@ -41,26 +34,43 @@ class PostsCtl {
                 body: { page, pageSize },
             },
         } = ctx
-        const friends = (
-            await Friend.find({
-                subject: new ObjectId(sub),
-                status: { $in: [1, 11] },
+        try {
+            const friends = (
+                await Friend.find({
+                    subject: new ObjectId(sub),
+                    status: { $in: [1, 11] },
+                })
+                    .select('object')
+                    .exec()
+                    .catch((e) => {
+                        throw e
+                    })
+            ).map((v) => v.object)
+            const posts = await Post.find({
+                subject: { $in: friends.concat([new ObjectId(sub)]) },
             })
-                .select('object')
+                .sort('-_id')
+                .select('-__v')
+                .skip(page * pageSize)
+                .limit(pageSize)
                 .exec()
-        ).map((v) => v.object)
-        const posts = await Post.find({
-            subject: { $in: friends.concat([new ObjectId(sub)]) },
-        })
-            .sort('-_id')
-            .select('-__v')
-            .skip(page * pageSize)
-            .limit(pageSize)
-            .exec()
-        ctx.body = {
-            code: CODES_POSTS.SUCCESS,
-            msg: '查询相关动态成功',
-            data: posts,
+                .catch((e) => {
+                    throw e
+                })
+            ctx.body = {
+                code: CODES_POSTS.SUCCESS,
+                msg: '查询相关动态成功',
+                data: posts,
+            }
+        } catch (e) {
+            e.res = {
+                status: 500,
+                body: {
+                    code: CODES_POSTS.ERROR_DATABASE,
+                    msg: '查询相关动态失败',
+                },
+            }
+            throw e
         }
     }
 
@@ -78,8 +88,18 @@ class PostsCtl {
                     time: new Date(),
                     type,
                     content: text,
-                }).save()
-                const data = { ...newPost._doc }
+                })
+                await newPost.save().catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_POSTS.ERROR_DATABASE,
+                            msg: '发布纯文本内容动态失败',
+                        },
+                    }
+                    throw e
+                })
+                const data = newPost._doc
                 delete data.__v
                 ctx.body = {
                     code: CODES_POSTS.SUCCESS,
@@ -94,12 +114,23 @@ class PostsCtl {
                     time: new Date(),
                     type,
                     content: text + '\n' + urls.join('\n'),
-                }).save()
-                delete newPost.__v
+                })
+                await newPost.save().catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_POSTS.ERROR_DATABASE,
+                            msg: '发布图文内容动态失败',
+                        },
+                    }
+                    throw e
+                })
+                const data = newPost._doc
+                delete data.__v
                 ctx.body = {
                     code: CODES_POSTS.SUCCESS,
                     msg: '发布图文内容动态成功',
-                    data: newPost,
+                    data,
                 }
                 return
             }
@@ -109,12 +140,23 @@ class PostsCtl {
                     time: new Date(),
                     type,
                     content: text + '\n' + urls.join('\n'),
-                }).save()
-                delete newPost.__v
+                })
+                await newPost.save().catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_POSTS.ERROR_DATABASE,
+                            msg: '发布视频内容动态失败',
+                        },
+                    }
+                    throw e
+                })
+                const data = newPost._doc
+                delete data.__v
                 ctx.body = {
                     code: CODES_POSTS.SUCCESS,
                     msg: '发布视频内容动态成功',
-                    data: newPost,
+                    data,
                 }
                 return
             }
@@ -135,7 +177,7 @@ class PostsCtl {
                 body: { page, pageSize },
             },
         } = ctx
-        if ((await User.findById(userId)) === null) {
+        if ((await User.findById(userId).catch(() => null)) === null) {
             ctx.status = 412
             ctx.body = {
                 code: CODES_POSTS.ERROR_USER_NOT_EXIST,
@@ -159,6 +201,16 @@ class PostsCtl {
             .skip(page * pageSize)
             .limit(pageSize)
             .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_POSTS.ERROR_DATABASE,
+                        msg: `查询用户${userId}的动态失败`,
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_POSTS.SUCCESS,
             msg: `查询用户${userId}的动态成功`,
@@ -172,7 +224,7 @@ class PostsCtl {
             params: { postId },
         } = ctx
         const post = await Post.findById(postId).exec()
-        if (post.subject.toString() !== sub) {
+        if (post !== null && post.subject.toString() !== sub) {
             ctx.status = 412
             ctx.body = {
                 code: CODES_POSTS.SUCCESS,
@@ -180,7 +232,18 @@ class PostsCtl {
             }
             return
         }
-        await Post.findByIdAndDelete(postId).exec()
+        await Post.findByIdAndDelete(postId)
+            .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_POSTS.ERROR_DATABASE,
+                        msg: '该动态删除失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_POSTS.SUCCESS,
             msg: '动态删除成功',
@@ -194,6 +257,7 @@ class PostsCtl {
         } = ctx
         const post = await Post.findById(postId).exec()
         if (
+            post !== null &&
             post.subject.toString() !== sub &&
             !checkIsFriends(sub, post.subject.toString())
         ) {
@@ -208,6 +272,17 @@ class PostsCtl {
         if (index === -1) {
             post.likes.push(new Object(sub))
             await Post.findByIdAndUpdate(postId, post)
+                .exec()
+                .catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_POSTS.ERROR_DATABASE,
+                            msg: '该用户点赞该动态失败',
+                        },
+                    }
+                    throw e
+                })
         }
         ctx.body = {
             code: CODES_POSTS.SUCCESS,
@@ -222,6 +297,7 @@ class PostsCtl {
         } = ctx
         const post = await Post.findById(postId).exec()
         if (
+            post !== null &&
             post.subject.toString() !== sub &&
             !checkIsFriends(sub, post.subject.toString())
         ) {
@@ -235,7 +311,16 @@ class PostsCtl {
         const index = post.likes.indexOf(new ObjectId(sub))
         if (index !== -1) {
             post.likes.splice(index, 1)
-            await Post.findByIdAndUpdate(postId, post)
+            await Post.findByIdAndUpdate(postId, post).catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_POSTS.ERROR_DATABASE,
+                        msg: '该用户取消点赞该动态失败',
+                    },
+                }
+                throw e
+            })
         }
         ctx.body = {
             code: CODES_POSTS.SUCCESS,
@@ -251,17 +336,39 @@ class PostsCtl {
                 body: { object, content },
             },
         } = ctx
-        // TODO 检查object用户是否存在
+        if (
+            (await User.findById(object)
+                .exec()
+                .catch(() => null)) === null
+        ) {
+            ctx.status = 412
+            ctx.body = {
+                code: CODES_POSTS.ERROR_USER_NOT_EXIST,
+                msg: '回复对象不存在',
+            }
+            return
+        }
         await new PostComment({
             subject: new ObjectId(sub),
             object: new ObjectId(object),
             target: new ObjectId(postId),
             time: new Date(),
             content,
-        }).save()
+        })
+            .save()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_POSTS.ERROR_DATABASE,
+                        msg: `评论动态${postId}失败`,
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_POSTS.SUCCESS,
-            msg: `评论${postId}成功`,
+            msg: `评论动态${postId}成功`,
         }
     }
 
@@ -270,7 +377,9 @@ class PostsCtl {
             sub,
             params: { commentId },
         } = ctx
-        const comment = await PostComment.findById(commentId).exec()
+        const comment = await PostComment.findById(commentId)
+            .exec()
+            .catch(() => null)
         if (comment === null) {
             ctx.status = 412
             ctx.body = {
@@ -287,7 +396,18 @@ class PostsCtl {
             }
             return
         }
-        await PostComment.findByIdAndDelete(commentId).exec()
+        await PostComment.findByIdAndDelete(commentId)
+            .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_POSTS.ERROR_DATABASE,
+                        msg: `删除评论${commentId}失败`,
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_POSTS.SUCCESS,
             msg: `删除评论${commentId}成功`,
@@ -315,7 +435,18 @@ class PostsCtl {
             post: new ObjectId(postId),
             status: 12,
             content,
-        }).save()
+        })
+            .save()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_POSTS.ERROR_DATABASE,
+                        msg: `提交对${postId}的举报失败`,
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_POSTS.SUCCESS,
             msg: `提交对${postId}的举报成功`,

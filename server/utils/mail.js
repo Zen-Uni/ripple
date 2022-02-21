@@ -18,24 +18,13 @@ transporter.verify((error) => {
     console.log('Ripple-backend已初始化邮件服务...')
 })
 
-const sendMail = async (to, subject, content) => {
-    new Promise(async (resolve, reject) => {
-        const [err] = await transporter
-            .sendMail({
-                from: `"Ripple" ${process.env.MAIL_USER}`,
-                to,
-                subject,
-                ...content,
-            })
-            .then((info) => [null, info])
-            .catch((err) => [err, null])
-        if (err !== null) {
-            reject()
-            return
-        }
-        resolve()
+const sendMail = (to, subject, content) =>
+    transporter.sendMail({
+        from: `"Ripple" ${process.env.MAIL_USER}`,
+        to,
+        subject,
+        ...content,
     })
-}
 
 module.exports = {
     sendMail,

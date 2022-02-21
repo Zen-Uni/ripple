@@ -40,9 +40,19 @@ class UserMessagesCtl {
                     messages: { $push: '$$CURRENT' },
                 })
                 .project('-_id -messages.__v')
-                .exec(),
-            { path: 'sender', select: 'email username avatarUrl' },
-        )
+                .exec()
+                .catch((e) => e),
+            { path: 'sender', select: '-password -__v' },
+        ).catch((e) => {
+            e.res = {
+                status: 500,
+                body: {
+                    code: CODES_MESSAGES.ERROR_MESSAGES_USERS_NOT_FIND,
+                    msg: '获取最近单聊消息失败',
+                },
+            }
+            throw e
+        })
         const groupMessages = await GroupMessageRecord.aggregate()
             .match({
                 receiver: new ObjectId(sub),
@@ -79,6 +89,16 @@ class UserMessagesCtl {
             })
             .project('-_id -__v -receiver -since -messages.__v')
             .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_MESSAGES.ERROR_MESSAGES_GROUPS_NOT_FIND,
+                        msg: '获取最近群聊消息失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_MESSAGES.SUCCESS,
             msg: '获取最近消息成功',
@@ -96,7 +116,18 @@ class UserMessagesCtl {
                 body: { page, pageSize },
             },
         } = ctx
-        // TODO 目标用户不存在
+        if (
+            (await User.findById(userId)
+                .exec()
+                .catch(() => null)) === null
+        ) {
+            ctx.status = 412
+            ctx.body = {
+                code: CODES_MESSAGES.ERROR_USER_NOT_EXIST,
+                msg: '目标用户不存在',
+            }
+            return
+        }
         const messages = await UserMessage.find({
             $or: [
                 {
@@ -114,6 +145,16 @@ class UserMessagesCtl {
             .skip(page * pageSize)
             .limit(pageSize)
             .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_MESSAGES.ERROR_MESSAGES_USERS_NOT_FIND,
+                        msg: '获取单聊消息失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_MESSAGES.SUCCESS,
             msg: '查询单聊消息成功',
@@ -128,7 +169,11 @@ class UserMessagesCtl {
             },
             params: { userId },
         } = ctx
-        if ((await User.findById(sub).exec()) === null) {
+        if (
+            (await User.findById(userId)
+                .exec()
+                .catch(() => null)) === null
+        ) {
             ctx.status = 412
             ctx.body = {
                 code: CODES_MESSAGES.ERROR_RECEIVER_NOT_EXIST,
@@ -152,7 +197,13 @@ class UserMessagesCtl {
             status: 0,
             type: 'text',
         })
-        await userMessage.save()
+        await userMessage.save().catch((e) => {
+            e.res = {
+                code: CODES_MESSAGES.ERROR_MESSAGE_SAVE_FAIL,
+                msg: '单聊消息发送失败',
+            }
+            throw e
+        })
         const msg = { ...userMessage._doc }
         delete msg.__v
         distributeUserMessage(userId, msg)
@@ -170,12 +221,14 @@ class UserMessagesCtl {
                 body: { status },
             },
         } = ctx
-        const targetMessage = await UserMessage.findById(userMessageId).exec()
+        const targetMessage = await UserMessage.findById(userMessageId)
+            .exec()
+            .catch(() => null)
         if (targetMessage === null) {
             ctx.status = 412
             ctx.body = {
                 code: CODES_MESSAGES.ERROR_MESSAGE_NOT_EXIST,
-                msg: '单聊消息不存在',
+                msg: '该单聊消息不存在',
             }
             return
         }
@@ -190,34 +243,64 @@ class UserMessagesCtl {
                     return
                 }
                 if (isBoundary) {
-                    const { modifiedCount } = await UserMessage.updateMany(
-                        { _id: { $lte: targetMessage._id } },
-                        { status },
-                    ).exec()
-                    const userMessageIds = (
-                        await UserMessage.find({
-                            _id: { $lte: targetMessage._id },
-                        })
-                            .select('_id')
+                    try {
+                        const { modifiedCount } = await UserMessage.updateMany(
+                            { _id: { $lte: targetMessage._id } },
+                            { status },
+                        )
                             .exec()
-                    ).map((v) => v._id)
-                    distributeReadUserMessages(
-                        targetMessage.receiver,
-                        userMessageIds,
-                    )
-                    ctx.body = {
-                        code: CODES_MESSAGES.SUCCESS,
-                        msg: `已将${modifiedCount}条消息标记为已读`,
+                            .catch((e) => {
+                                throw e
+                            })
+                        const userMessageIds = (
+                            await UserMessage.find({
+                                _id: { $lte: targetMessage._id },
+                            })
+                                .select('_id')
+                                .exec()
+                                .catch((e) => {
+                                    throw e
+                                })
+                        ).map((v) => v._id)
+                        distributeReadUserMessages(
+                            targetMessage.receiver,
+                            userMessageIds,
+                        )
+                        ctx.body = {
+                            code: CODES_MESSAGES.SUCCESS,
+                            msg: `已将${modifiedCount}条单聊消息标记为已读`,
+                        }
+                    } catch (e) {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_MESSAGES.ERROR_DATABASE,
+                                msg: '多条单聊消息标记已读失败',
+                            },
+                        }
+                        throw e
                     }
                     return
                 }
-                await targetMessage.updateOne({ status }).exec()
+                await targetMessage
+                    .updateOne({ status })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_MESSAGES.ERROR_DATABASE,
+                                msg: '该单聊消息标记失败',
+                            },
+                        }
+                        throw e
+                    })
                 distributeReadUserMessages(targetMessage.receiver, [
                     targetMessage._id,
                 ])
                 ctx.body = {
                     code: CODES_MESSAGES.SUCCESS,
-                    msg: '已将消息标记为已读',
+                    msg: '已将单聊消息标记为已读',
                 }
                 return
             case 10:
@@ -230,7 +313,19 @@ class UserMessagesCtl {
                     }
                     return
                 }
-                await targetMessage.updateOne({ status }).exec()
+                await targetMessage
+                    .updateOne({ status })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_MESSAGES.ERROR_DATABASE,
+                                msg: '该消息撤回失败',
+                            },
+                        }
+                        throw e
+                    })
                 distributeRecallUserMessages(targetMessage.receiver, [
                     targetMessage._id,
                 ])
@@ -243,7 +338,7 @@ class UserMessagesCtl {
                 ctx.status = 412
                 ctx.body = {
                     code: CODES_MESSAGES.ERROR_STATUS_NOT_EXIST,
-                    msg: `消息状态无法更新为${status}`,
+                    msg: `单聊消息状态无法更新为${status}`,
                 }
                 return
         }
@@ -259,7 +354,9 @@ class UserMessagesCtl {
         const member = await Member.findOne({
             member: sub,
             group: groupId,
-        }).exec()
+        })
+            .exec()
+            .catch(() => null)
         if (member === null || member.status !== 1) {
             ctx.status = 412
             ctx.body = {
@@ -276,6 +373,16 @@ class UserMessagesCtl {
             .skip(page * pageSize)
             .limit(pageSize)
             .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_MESSAGES.ERROR_DATABASE,
+                        msg: '查询群聊消息失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_MESSAGES.SUCCESS,
             msg: '查询群聊消息成功',
@@ -290,7 +397,11 @@ class UserMessagesCtl {
             },
             params: { groupId },
         } = ctx
-        if ((await Group.findById(groupId).exec()) === null) {
+        if (
+            (await Group.findById(groupId)
+                .exec()
+                .catch(() => null)) === null
+        ) {
             ctx.status = 412
             ctx.body = {
                 code: CODES_MESSAGES.ERROR_GROUP_NOT_EXIST,
@@ -314,7 +425,16 @@ class UserMessagesCtl {
             status: 0,
             type: 'text',
         })
-        await groupMessage.save()
+        await groupMessage.save().catch((e) => {
+            e.res = {
+                status: 500,
+                body: {
+                    code: CODES_MESSAGES.ERROR_DATABASE,
+                    msg: '该群聊消息发送失败',
+                },
+            }
+            throw e
+        })
         const msg = { ...groupMessage._doc }
         delete msg.__v
         distributeGroupMessage(groupId, msg) // TODO 失败时回滚
@@ -332,7 +452,9 @@ class UserMessagesCtl {
                 body: { status },
             },
         } = ctx
-        const targetMessage = await GroupMessage.findById(groupMessageId).exec()
+        const targetMessage = await GroupMessage.findById(groupMessageId)
+            .exec()
+            .catch(() => null)
         if (targetMessage === null) {
             ctx.status = 412
             ctx.body = {
@@ -344,32 +466,61 @@ class UserMessagesCtl {
         switch (status) {
             case 1:
                 if (isBoundary) {
-                    const { modifiedCount } = await GroupMessage.updateMany(
-                        { _id: { $lte: targetMessage._id } },
-                        { status },
-                    ).exec()
-                    const groupMessageIds = (
-                        await UserMessage.find({
-                            _id: { $lte: targetMessage._id },
-                        })
-                            .select('_id')
+                    try {
+                        const { modifiedCount } = await GroupMessage.updateMany(
+                            { _id: { $lte: targetMessage._id } },
+                            { status },
+                        )
                             .exec()
-                    ).map((v) => v._id)
-                    distributeReadGroupMessages(
-                        targetMessage.group,
-                        groupMessageIds,
-                    )
-                    ctx.body = {
-                        code: CODES_MESSAGES.SUCCESS,
-                        msg: `已将${modifiedCount}条消息标记为已读`,
+                            .catch((e) => {
+                                throw e
+                            })
+                        const groupMessageIds = (
+                            await UserMessage.find({
+                                _id: { $lte: targetMessage._id },
+                            })
+                                .select('_id')
+                                .exec()
+                                .catch((e) => {
+                                    throw e
+                                })
+                        ).map((v) => v._id)
+                        distributeReadGroupMessages(
+                            targetMessage.group,
+                            groupMessageIds,
+                        )
+                        ctx.body = {
+                            code: CODES_MESSAGES.SUCCESS,
+                            msg: `已将${modifiedCount}条消息标记为已读`,
+                        }
+                    } catch (e) {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_MESSAGES.ERROR_DATABASE,
+                                msg: '多条群聊消息标记已读失败',
+                            },
+                        }
+                        throw e
                     }
                     return
                 }
-                await targetMessage.updateOne({ status }).exec()
+                await targetMessage
+                    .updateOne({ status })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_MESSAGES.ERROR_DATABASE,
+                                msg: '该群聊消息标记已读失败',
+                            },
+                        }
+                        throw e
+                    })
                 distributeReadGroupMessages(targetMessage.group, [
                     targetMessage._id,
                 ])
-
                 ctx.body = {
                     code: CODES_MESSAGES.SUCCESS,
                     msg: '已将消息标记为已读',
@@ -377,7 +528,19 @@ class UserMessagesCtl {
                 return
             case 10:
             case 11:
-                await targetMessage.updateOne({ status }).exec()
+                await targetMessage
+                    .updateOne({ status })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_MESSAGES.ERROR_DATABASE,
+                                msg: '该群聊消息撤回失败',
+                            },
+                        }
+                        throw e
+                    })
                 distributeRecallGroupMessages(targetMessage.group, [
                     targetMessage._id,
                 ])

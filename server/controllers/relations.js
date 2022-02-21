@@ -72,6 +72,16 @@ class RelationsCtl {
                 .populate({ path: 'object', select: '-password -__v' })
                 .select('email userName avatarUrl')
                 .exec()
+                .catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_RELATIONS.ERROR_DATABASE,
+                            msg: '好友获取失败',
+                        },
+                    }
+                    throw e
+                })
         ).map((v) => v.object)
         const groups = await Member.find({
             member: new ObjectId(sub),
@@ -82,6 +92,16 @@ class RelationsCtl {
             })
             .select('-__v')
             .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_RELATIONS.ERROR_DATABASE,
+                        msg: '群聊获取失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_RELATIONS.SUCCESS,
             msg: '通讯录查询成功',
@@ -180,18 +200,36 @@ class RelationsCtl {
                 time: { apply: new Date() },
                 status: 0,
                 memo,
-            }).save(),
+            })
+                .save()
+                .catch((e) => {
+                    throw e
+                }),
             await new Friend({
                 subject: new ObjectId(object),
                 object: new ObjectId(sub),
                 time: { apply: new Date() },
                 status: 0,
                 memo,
-            }).save(),
-        ]).catch((e) => console.debug(e)) // TODO unique时选择更新
+            })
+                .save()
+                .catch((e) => {
+                    throw e
+                }),
+        ]).catch((e) => {
+            // TODO unique时换成Update操作
+            e.res = {
+                status: 500,
+                body: {
+                    code: CODES_RELATIONS.ERROR_DATABASE,
+                    msg: '好友请求创建失败',
+                },
+            }
+            throw e
+        })
         ctx.body = {
             code: CODES_RELATIONS.SUCCESS,
-            msg: '好友请求已创建',
+            msg: '好友请求创建成功',
         }
     }
 
@@ -206,7 +244,9 @@ class RelationsCtl {
         const friend = await Friend.findOne({
             subject: new ObjectId(sub),
             object: new ObjectId(userId),
-        }).exec()
+        })
+            .exec()
+            .catch(() => null)
         if (friend === null) {
             ctx.status = 412
             ctx.body = {
@@ -219,7 +259,18 @@ class RelationsCtl {
             case 'tip':
                 await Friend.findByIdAndUpdate(friend._id, {
                     tip,
-                }).exec()
+                })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_RELATIONS.ERROR_DATABASE,
+                                msg: '好友备注修改失败',
+                            },
+                        }
+                        throw e
+                    })
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
                     msg: '好友备注修改成功',
@@ -236,7 +287,11 @@ class RelationsCtl {
                         {
                             status: 11,
                         },
-                    ),
+                    )
+                        .exec()
+                        .catch((e) => {
+                            throw e
+                        }),
                     Friend.findOneAndUpdate(
                         {
                             subject: new ObjectId(userId),
@@ -245,11 +300,24 @@ class RelationsCtl {
                         {
                             status: 1,
                         },
-                    ),
-                ])
+                    )
+                        .exec()
+                        .catch((e) => {
+                            throw e
+                        }),
+                ]).catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_RELATIONS,
+                            msg: '好友请求同意失败',
+                        },
+                    }
+                    throw e
+                })
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
-                    msg: '好友请求已同意',
+                    msg: '好友请求同意成功',
                 }
                 return
             case 'deny':
@@ -262,7 +330,11 @@ class RelationsCtl {
                         {
                             status: 12,
                         },
-                    ),
+                    )
+                        .exec()
+                        .catch((e) => {
+                            throw e
+                        }),
                     Friend.findOneAndUpdate(
                         {
                             subject: new ObjectId(userId),
@@ -271,11 +343,24 @@ class RelationsCtl {
                         {
                             status: 2,
                         },
-                    ),
-                ])
+                    )
+                        .exec()
+                        .catch((e) => {
+                            throw e
+                        }),
+                ]).catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_RELATIONS,
+                            msg: '好友请求拒绝失败',
+                        },
+                    }
+                    throw e
+                })
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
-                    msg: '好友请求已拒绝',
+                    msg: '好友请求拒绝成功',
                 }
         }
     }
@@ -294,7 +379,9 @@ class RelationsCtl {
                 { subject: new ObjectId(userId), object: new ObjectId(sub) },
             ],
             status: { $in: [1, 11] },
-        }).exec()
+        })
+            .exec()
+            .catch(() => [])
         if (friends.length === 0) {
             ctx.status = 412
             ctx.body = {
@@ -305,7 +392,18 @@ class RelationsCtl {
         }
         await Friend.deleteMany({
             _id: { $in: friends.map((v) => v._id) },
-        }).exec()
+        })
+            .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_RELATIONS.ERROR_DATABASE,
+                        msg: '好友删除失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_RELATIONS.SUCCESS,
             msg: '好友删除成功',
@@ -319,27 +417,44 @@ class RelationsCtl {
                 body: { groupName },
             },
         } = ctx
-        let newGroup = await new Group({
-            owner: new ObjectId(sub),
-            admins: [new ObjectId(sub)],
-            groupName,
-        })
-        await newGroup.save()
-        await new Member({
-            member: new ObjectId(sub),
-            group: new ObjectId(newGroup._id),
-            time: {
-                apply: new Date(),
-                reply: new Date(),
-            },
-            status: 1,
-        }).save()
-        newGroup = newGroup._doc
-        delete newGroup.__v
-        ctx.body = {
-            code: CODES_RELATIONS.SUCCESS,
-            msg: '群聊创建成功',
-            data: newGroup,
+        try {
+            let newGroup = await new Group({
+                owner: new ObjectId(sub),
+                admins: [new ObjectId(sub)],
+                groupName,
+            })
+            await newGroup.save().catch((e) => {
+                throw e
+            })
+            await new Member({
+                member: new ObjectId(sub),
+                group: new ObjectId(newGroup._id),
+                time: {
+                    apply: new Date(),
+                    reply: new Date(),
+                },
+                status: 1,
+            })
+                .save()
+                .catch((e) => {
+                    throw e
+                })
+            newGroup = newGroup._doc
+            delete newGroup.__v
+            ctx.body = {
+                code: CODES_RELATIONS.SUCCESS,
+                msg: '群聊创建成功',
+                data: newGroup,
+            }
+        } catch (e) {
+            e.res = {
+                status: 500,
+                body: {
+                    code: CODES_RELATIONS.ERROR_DATABASE,
+                    msg: '群聊创建失败',
+                },
+            }
+            throw e
         }
     }
 
@@ -351,7 +466,9 @@ class RelationsCtl {
                 body: { type, owner, groupName, members },
             },
         } = ctx
-        const group = await Group.findById(groupId).exec()
+        const group = await Group.findById(groupId)
+            .exec()
+            .catch(() => null)
         if (group === null) {
             ctx.status = 412
             ctx.body = {
@@ -365,10 +482,21 @@ class RelationsCtl {
                 await Member.findOneAndDelete({
                     member: new ObjectId(sub),
                     group: new ObjectId(groupId),
-                }).exec()
+                })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_RELATIONS.ERROR_DATABASE,
+                                msg: '退出该群失败',
+                            },
+                        }
+                        throw e
+                    })
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
-                    msg: '退出群聊成功',
+                    msg: '退出该群成功',
                 }
                 return
             case 'disbandment':
@@ -377,11 +505,28 @@ class RelationsCtl {
                     return
                 }
                 await Promise.all([
-                    Group.findByIdAndDelete(groupId).exec(),
+                    Group.findByIdAndDelete(groupId)
+                        .exec()
+                        .catch((e) => {
+                            throw e
+                        }),
                     Member.deleteMany({
                         group: groupId,
-                    }).exec(),
-                ])
+                    })
+                        .exec()
+                        .catch((e) => {
+                            throw e
+                        }),
+                ]).catch((e) => {
+                    e.res = {
+                        status: 500,
+                        body: {
+                            code: CODES_RELATIONS.ERROR_DATABASE,
+                            msg: '该群解散失败',
+                        },
+                    }
+                    throw e
+                })
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
                     msg: '该群解散成功',
@@ -398,7 +543,18 @@ class RelationsCtl {
                         group.admins.indexOf(new ObjectId(sub)) === -1
                             ? group.admins.push(owner)
                             : undefined,
-                }).exec()
+                })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_RELATIONS.ERROR_DATABASE,
+                                msg: '该群转让失败',
+                            },
+                        }
+                        throw e
+                    })
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
                     msg: '该群转让成功',
@@ -411,7 +567,18 @@ class RelationsCtl {
                 }
                 await Group.findByIdAndUpdate(groupId, {
                     groupName,
-                }).exec()
+                })
+                    .exec()
+                    .catch((e) => {
+                        e.res = {
+                            status: 500,
+                            body: {
+                                code: CODES_RELATIONS.ERROR_DATABASE,
+                                msg: '该群群名更改失败',
+                            },
+                        }
+                        throw e
+                    })
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
                     msg: '该群群名更改成功',
@@ -426,14 +593,18 @@ class RelationsCtl {
                     members.map(
                         (v) =>
                             new Promise(async (resolve) => {
-                                const user = await User.findById(v).exec()
+                                const user = await User.findById(v)
+                                    .exec()
+                                    .catch(() => null)
                                 if (user === null) {
                                     resolve([v, null])
                                     return
                                 }
                                 await Member.deleteOne({
                                     member: new ObjectId(user._id),
-                                }).exec()
+                                })
+                                    .exec()
+                                    .catch(() => resolve([v, null]))
                                 resolve([null, v])
                             }),
                     ),
@@ -451,14 +622,14 @@ class RelationsCtl {
                 if (fails.length !== 0) {
                     ctx.body = {
                         code: CODES_RELATIONS.ERROR_INVITATION_FAIL,
-                        msg: `${fails.length}人移除失败`,
+                        msg: `有${fails.length}人移除失败`,
                         data: fails,
                     }
                     return
                 }
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
-                    msg: `${results.length}名成员移除成功`,
+                    msg: `共${results.length}名成员移除成功`,
                 }
                 return
             }
@@ -470,7 +641,9 @@ class RelationsCtl {
                     members.map(
                         (v) =>
                             new Promise(async (resolve) => {
-                                const user = await User.findById(v).exec()
+                                const user = await User.findById(v)
+                                    .exec()
+                                    .catch(() => null)
                                 if (user === null) {
                                     resolve([v, null])
                                     return
@@ -488,6 +661,7 @@ class RelationsCtl {
                                     .save()
                                     .catch((e) => {
                                         if (e.code === 11000) return
+                                        resolve([v, null])
                                     })
                                 resolve([null, v])
                             }),
@@ -500,14 +674,14 @@ class RelationsCtl {
                 if (fails.length !== 0) {
                     ctx.body = {
                         code: CODES_RELATIONS.ERROR_INVITATION_FAIL,
-                        msg: `${fails.length}人邀请失败`,
+                        msg: `有${fails.length}人邀请失败`,
                         data: fails,
                     }
                     return
                 }
                 ctx.body = {
                     code: CODES_RELATIONS.SUCCESS,
-                    msg: `${results.length}人邀请成功`,
+                    msg: `共${results.length}人邀请成功`,
                 }
                 return
             }

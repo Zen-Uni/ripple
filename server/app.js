@@ -48,7 +48,21 @@ routing(app)
 
 // error-handling
 app.on('error', (err, ctx) => {
-    console.error('server error', err, ctx)
+    console.error(
+        'Server Error | 服务器端错误...\nerr -> %o\nctx -> %o\n---',
+        err,
+        ctx,
+    )
+    Object.assign(
+        ctx,
+        {
+            status: 500,
+            body: {
+                msg: '服务器端错误',
+            },
+        },
+        err.res,
+    )
 })
 
 module.exports = app

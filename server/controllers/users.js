@@ -46,6 +46,8 @@ class UsersCtl {
             })
                 .sort('-_id')
                 .limit(1)
+                .exec()
+                .catch(() => [undefined])
         )[0]
         if (lastRelatedCaptcha === undefined) {
             ctx.status = 412
@@ -63,7 +65,7 @@ class UsersCtl {
             }
             return
         }
-        const [err] = await new User({
+        const [e] = await new User({
             email,
             userName,
             password: md5(password),
@@ -72,13 +74,24 @@ class UsersCtl {
             .save()
             .then((v) => [null, v])
             .catch((e) => [e, null])
-        if (err && err.code === 11000) {
-            ctx.status = 412
-            ctx.body = {
-                code: CODES_USERS.ERROR_EMAIL_EXIST,
-                msg: `${email} 已被注册`,
+        if (e) {
+            if (encodeURIComponent.code === 11000) {
+                ctx.status = 412
+                ctx.body = {
+                    code: CODES_USERS.ERROR_EMAIL_EXIST,
+                    msg: `${email} 已被注册`,
+                }
+                return
+            } else {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_USERS.ERROR_DATABASE,
+                        msg: `${email} 注册失败`,
+                    },
+                }
+                throw e
             }
-            return
         }
         ctx.body = {
             code: CODES_CAPTCHAS.SUCCESS,
@@ -94,7 +107,9 @@ class UsersCtl {
         } = ctx
         const user = await User.findOne({
             email,
-        }).exec()
+        })
+            .exec()
+            .catch(() => null)
         if (user === null) {
             ctx.status = 412
             ctx.body = {
@@ -129,7 +144,18 @@ class UsersCtl {
         } = ctx
         await User.findByIdAndUpdate(sub, {
             userName,
-        }).exec()
+        })
+            .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_USERS.ERROR_DATABASE,
+                        msg: '用户名更改失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_USERS.SUCCESS,
             msg: `用户名已更改为${userName}`,
@@ -143,17 +169,31 @@ class UsersCtl {
                 body: { oldPassword, newPassword },
             },
         } = ctx
-        if ((await User.findById(sub).exec()).password !== md5(oldPassword)) {
+        const user = await User.findById(sub)
+            .exec()
+            .catch(() => null)
+        if (user === null || user.password !== md5(oldPassword)) {
             ctx.status = 412
             ctx.body = {
                 code: CODES_USERS.ERROR_PASSWORD_WRONG,
-                msg: '密码错误',
+                msg: '旧密码错误',
             }
             return
         }
         await User.findByIdAndUpdate(sub, {
             password: md5(newPassword),
-        }).exec()
+        })
+            .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_USERS.ERROR_DATABASE,
+                        msg: '密码更改失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_USERS.SUCCESS,
             msg: '密码已更改',
@@ -169,10 +209,21 @@ class UsersCtl {
         } = ctx
         await User.findByIdAndUpdate(sub, {
             memo,
-        }).exec()
+        })
+            .exec()
+            .catch((e) => {
+                e.res = {
+                    status: 500,
+                    body: {
+                        code: CODES_USERS.ERROR_DATABASE,
+                        msg: '个人签名更改失败',
+                    },
+                }
+                throw e
+            })
         ctx.body = {
             code: CODES_USERS.SUCCESS,
-            msg: '个人签名已更改',
+            msg: '个人签名更改成功',
         }
     }
 }
