@@ -5,14 +5,16 @@
  */
 
 const router = require('koa-router')()
-const { index, bar, handleError, handleParameter } = require('../controllers/users')
+const { captcha, register,uploadAvatar,login,handleError, handleParameter } = require('../controllers/users')
 
+router.prefix('/api/users')
 
-router.prefix('/users')
+router.get('/captcha',captcha)
+router.post('/register',register)
+router.post('/login',login)
+router.post('/upload',uploadAvatar)
 
-router.get('/', index)
-router.get('/:id', handleError)
-router.get('/bar', bar)
+// router.get('/:id', handleError)
 
 router.post('/param', handleParameter)
 
